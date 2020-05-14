@@ -17,9 +17,13 @@
 </head>
 
 <body class="relative flex flex-col h-screen bg-baseLigth" onload="InitializeWallet()">
+    <!-- Canvas used to display the bar-->
     <div class="absolute z-0">
         <canvas id="myChart" height="600" width="800"></canvas>
     </div>
+    <!-- End of the canvas-->
+
+    <!-- The title bar-->
     <div class="flex flex-row justify-between titlebar pr-4 py-2 my-2 z-50 ">
         <div class="pl-8 w-24 text-secondaryLigth">
             <svg class=" object-fill fill-current" xmlns="http://www.w3.org/2000/svg"
@@ -63,7 +67,8 @@
         </div>
         </a>
     </div>
-
+    <!-- Here lies the titlebar-->
+    <!-- This is the main window-->
     <div class="flex flex-row h-full z-10 ">
         <!-- Starts Side Menu-->
         <div class="w-2/12 h-full pt-8 pb-12 px-8 text-white">
@@ -117,6 +122,7 @@
         </div>
         <!-- What a shame, it was a good window -->
     </div>
+    <!-- This WAS the main window dead-->
 
 
     <script>
@@ -128,7 +134,7 @@
             //We now load the address
         }
     </script>
-    <!-- What a shame, it was a good window -->
+    <!-- The script to display the graph-->
     <script>
         function formatDate(date) {
             var d = new Date(date),
@@ -233,8 +239,9 @@
 
 
     </script>
-    <!-- What a shame, it was a good window -->
+    <!-- The script to display the graph-->
 
+    <!-- The functions to communicate with Python-->
     <script>
         const { ipcRenderer } = require('electron');
         ipcRenderer.on('MESSAGE_FROM_BACKGROUND_VIA_MAIN', (event, args) => {
@@ -248,6 +255,7 @@
             number: 25,
         });
     </script>
+    <!-- The functions to communicate with Python-->
 </body>
 
 </html>

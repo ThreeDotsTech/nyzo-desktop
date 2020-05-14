@@ -1,0 +1,18 @@
+{
+  "name": "nyzo-desktop",
+  "version": "0.1.0",
+  "description": "A cross platform wallet for the Nyzo cryptocurrency.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "ThreeDots Technologies",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^5.2.0",
+    "electron": "^8.2.5",
+    "python-shell": "^2.0.0",
+    "tailwindcss": "^1.4.6",
+    "wait-on": "^5.0.0"
+  }
+}

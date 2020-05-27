@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome!</title>
+    <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link rel="stylesheet" href="output.css">
+</head>
+
+<body class="relative flex flex-col h-screen bg-baseLigth overflow-hidden select-none font-sans" onload="checkWallet()">
+    <!-- The title bar-->
+    <div class="flex flex-row justify-between titlebar pr-4 py-4 z-50 ">
+
+        <div class="flex flex-grow justify-end items-center ">
+            <div class="relative flex justify-center items-center rounded-full h-4 w-4  bg-tdBlue mr-2 text-black">
+                <svg class=" object-fill fill-current" width="12" height="24" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24">
+                    <path
+                        d="M8.465 16.95l2.828 3.05h-7.293v-7.293l3.051 2.829 8.484-8.486-2.828-3.05h7.293v7.292l-3.051-2.828z" />
+                </svg>
+                <div class="absolute hover:bg-transparent rounded-full h-4 w-4  bg-tdBlue  mr-2">
+
+                </div>
+            </div>
+            <div onclick="minimize();"
+                class="relative flex justify-center items-center rounded-full h-4 w-4 bg-tdGreen mr-2 text-black">
+                <a class=" object-fill fill-current">
+                    -
+                </a>
+                <div class="absolute hover:bg-transparent rounded-full h-4 w-4  bg-tdGreen  mr-2">
+
+                </div>
+            </div>
+            <div onclick="closeWindow();"
+                class="relative flex justify-center items-center rounded-full h-4 w-4  bg-tdRed mr-2 text-black">
+                <svg class=" object-fill fill-current" width="7" height="24" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24">
+                    <path
+                        d="M23.954 21.03l-9.184-9.095 9.092-9.174-2.832-2.807-9.09 9.179-9.176-9.088-2.81 2.81 9.186 9.105-9.095 9.184 2.81 2.81 9.112-9.192 9.18 9.1z" />
+                </svg>
+
+                <div class="absolute hover:bg-transparent rounded-full h-4 w-4  bg-tdRed  mr-2">
+
+                </div>
+            </div>
+        </div>
+        </a>
+    </div>
+
+    <div id="Menu" class="flex flex-col h-full z-10 mx-20 justify-around py-16 hidden">
+
+        <div class="flex justify-center">
+            <div class="w-32 text-secondaryLigth mb-8">
+                <svg class=" object-fill fill-current" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink" id="svg" viewBox="0, 0, 400,92.9530201342282">
+                    <g id="svgg">
+                        <path id="path0"
+                            d="M41.682 0.345 C 21.902 2.363,6.000 16.254,1.358 35.570 C 0.214 40.327,-0.054 46.604,0.061 65.940 L 0.168 84.060 1.035 85.908 C 4.702 93.725,15.433 93.725,19.100 85.908 L 19.966 84.060 20.156 62.248 C 20.298 45.780,20.451 40.107,20.778 39.094 C 27.907 17.011,55.947 12.942,68.189 32.215 C 71.922 38.091,72.122 39.680,72.136 63.662 C 72.147 82.721,72.175 83.605,72.821 85.333 C 76.036 93.925,88.058 93.925,91.272 85.333 C 92.063 83.219,92.319 45.937,91.581 40.238 C 88.405 15.694,66.092 -2.145,41.682 0.345 M110.722 1.445 C 104.508 3.196,102.462 8.015,103.855 17.617 C 106.500 35.853,120.020 50.873,137.836 55.371 L 139.262 55.731 139.270 69.728 C 139.279 84.958,139.364 85.837,141.091 88.454 C 144.637 93.828,152.346 94.309,156.645 89.425 C 159.049 86.695,159.060 86.602,159.060 70.276 L 159.060 55.772 160.822 55.356 C 179.940 50.844,194.683 32.322,195.032 12.378 C 195.285 -2.079,176.355 -3.010,175.329 11.409 C 174.426 24.104,166.862 33.565,155.442 36.285 C 139.372 40.113,124.529 28.953,123.210 12.052 C 122.591 4.117,117.272 -0.401,110.722 1.445 M214.340 1.368 C 205.150 3.559,203.759 15.836,212.245 19.851 L 214.262 20.805 239.427 20.805 L 264.592 20.805 236.356 49.077 C 220.827 64.627,207.892 77.808,207.612 78.369 C 205.027 83.548,207.643 90.279,213.024 92.292 C 214.806 92.959,215.421 92.968,252.803 92.877 L 290.772 92.785 292.671 91.852 C 298.793 88.846,300.195 80.888,295.449 76.075 C 292.438 73.021,293.814 73.154,265.348 73.154 L 240.453 73.154 268.675 44.883 C 295.534 17.977,296.932 16.517,297.610 14.669 C 299.441 9.677,297.372 4.416,292.671 2.107 L 290.772 1.174 253.188 1.121 C 231.935 1.090,215.055 1.198,214.340 1.368 M349.664 1.349 C 311.701 4.995,294.441 50.788,320.609 78.441 C 344.419 103.602,386.522 94.212,397.483 61.295 C 407.856 30.143,382.382 -1.792,349.664 1.349 M361.242 21.978 C 382.271 28.069,386.666 56.206,368.524 68.601 C 353.155 79.103,331.600 70.032,328.326 51.685 C 324.914 32.563,342.619 16.584,361.242 21.978 " />
+                    </g>
+                </svg>
+            </div>
+        </div>
+
+        <div id="create" class="btn py-2 px-4 rounded-lg">Create
+            new
+            wallet</div>
+        <div id="import" class=" btn py-2 px-4 rounded-lg">Import
+            wallet</div>
+    </div>
+    <div id="snackbar" class="text-white"></div>
+    <div id="createScreen" class="relative flex flex-col h-full z-10 p-6 hidden">
+        <div class="flex justify-between pt-5 pb-5 items-center">
+            <a class="font-bold">Backup your seed</a>
+            <a id="copy" class="btn rounded-full mr-4">
+                <svg class="w-5 h-5 fill-current m-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M22 6v16h-16v-16h16zm2-2h-20v20h20v-20zm-24 17v-21h21v2h-19v19h-2z" /></svg>
+            </a>
+
+        </div>
+        <div id="mnemonicField"
+            class="flex flex-wrap bg-gray-300 items-center justify-center h-48 rounded-md mb-10 shadow-inner">
+            <div id="mnemonicSpinner" class="spinner">
+                <div class="bounce1 bg-tdBlue"></div>
+                <div class="bounce2 bg-tdGreen"></div>
+                <div class="bounce3 bg-tdRed"></div>
+            </div>
+        </div>
+        <a id="backedUp" class="btn py-2 px-4">I
+            have backed up my seed</a>
+        <div class="absolute w-8 h-8 ml-2 cursor-pointer left-0 top-0" onclick="backFromCreate();">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z" /></svg>
+        </div>
+
+    </div>
+
+    <div id="importScreen" class="relative flex flex-col h-full z-10 p-6 hidden">
+        <div class="flex justify-between pt-5 pb-5 items-center">
+            <a class="font-bold">Write your mnemonic seed</a>
+        </div>
+
+        <div class="py-2">
+            <span class="px-1 text-sm text-gray-600 p-2">Seed</span>
+            <textarea class="input h-40" onchange="validateMnemonic();" oninput="removeInvalidSeed()"
+                name="inputMnemonic" id="InputMnemonic" cols="30" style="resize: none;" rows="4"></textarea>
+        </div>
+        <div id="invalidText" class="flex items-center py-1 mt-3 ml-4 p-1 invisible">
+            <div class=" rounded-full p-1 fill-current bg-red-200 text-red-700">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </div>
+            <span class="font-medium text-sm ml-3 text-red-700">Invalid Seed</span>
+        </div>
+
+        <a id="imported" class="disabledBtn py-2 px-4 mt-5">
+            Continue</a>
+
+        <div class="absolute w-8 h-8 ml-2 cursor-pointer left-0 top-0" onclick="backFromImport();">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z" /></svg>
+        </div>
+
+    </div>
+
+    <div id="setPass" class="container max-w-full mx-auto py-2 px-6 hidden">
+        <div>
+            <div class="max-w-sm mx-auto px-6">
+                <div class="relative flex flex-wrap">
+                    <div class="w-full relative">
+                        <div class="mt-6">
+                            <div class="text-center font-semibold text-black">
+                                Set a password to encrypt you wallet.
+                            </div>
+
+                            <form class="mt-8" onsubmit="encrypt();return false;">
+                                <div class="mx-auto max-w-lg">
+                                    <div class="py-2">
+                                        <span class="px-1 text-sm text-gray-600">Password</span>
+                                        <input id="inputPass" type="password" class="input px-3 py-2"
+                                            oninput="validate()" />
+                                    </div>
+                                    <div class="py-2"></div>
+                                    <span class="px-1 text-sm text-gray-600">Confirm password</span>
+                                    <div class="relative">
+                                        <input id="inputConfirmPass" type="password" class="input px-3 py-2"
+                                            oninput="validate()" />
+
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-start mt-3 ml-4 p-1">
+                                    <ul>
+                                        <li class="flex items-center py-1">
+                                            <div id="lenDiv" class=" rounded-full p-1 fill-current">
+                                                <svg id="lenSvg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                                                    stroke="currentColor">
+
+                                                </svg>
+                                            </div>
+                                            <span id="lenText" class="font-medium text-sm ml-3 text-red-700"></span>
+                                        </li>
+                                        <li class="flex items-center py-1">
+                                            <div id="matchDiv" class=" rounded-full p-1 fill-current">
+                                                <svg id="matchSvg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                                                    stroke="currentColor">
+
+                                                </svg>
+                                            </div>
+                                            <span id="matchText" class="font-medium text-sm ml-3 text-red-700"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div id="encryptbtn" class="disabledBtn mt-2 px-6 py-3">
+                                    Encrypt
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="unlock" class="container max-w-full mx-auto py-2 px-6 hidden">
+        <div>
+            <div class="max-w-sm mx-auto px-6">
+                <div class="relative flex flex-wrap">
+                    <div class="w-full relative">
+                        <div class="mt-6">
+                            <div class="text-center font-semibold text-black">
+                                Unlock your wallet.
+                            </div>
+
+                            <form class="mt-20" onsubmit="unlockWallet(); return false;">
+                                <div class="mx-auto max-w-lg">
+                                    <div class="py-2">
+                                        <span class="px-1 text-sm text-gray-600">Password</span>
+                                        <input id="unlockPass" type="password" class="input px-3 py-2"
+                                            oninput="removeWrongLegend()" />
+                                    </div>
+                                </div>
+
+                                <div id="wrongPassword" class="flex justify-start mt-3 ml-4 p-1 invisible">
+                                    <ul>
+                                        <li class="flex items-center py-1">
+                                            <div class="rounded-full p-1 fill-current text-red-700 bg-red-200">
+                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                                                    stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </div>
+                                            <span class="font-medium text-sm ml-3 text-red-700">Wrong
+                                                password</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div id="unlockBtn" class="btn mt-20 px-6 py-3">
+                                    Unlock
+                                </div>
+                            </form>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading" class="flex justify-center items-center h-full">
+        <div class="spinner">
+            <div class="bounce1 bg-tdBlue"></div>
+            <div class="bounce2 bg-tdGreen"></div>
+            <div class="bounce3 bg-tdRed"></div>
+        </div>
+    </div>
+
+    <script src="js/nyzospace/src/index.js"></script>
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        var isValid = false;
+        var mnemonicValid = false;
+        var pass = '';
+        var mnemonic;
+        const lenDiv = document.getElementById("lenDiv");
+        const lenText = document.getElementById("lenText");
+        const invalidText = document.getElementById("invalidText");
+        const lenSvg = document.getElementById("lenSvg");
+        const matchDiv = document.getElementById("matchDiv");
+        const matchText = document.getElementById("matchText");
+        const matchSvg = document.getElementById("matchSvg");
+        const encryptbtn = document.getElementById("encryptbtn");
+        const createbtn = document.getElementById('create');
+        const importbtn = document.getElementById('import');
+        const copybtn = document.getElementById('copy');
+        const backedUpbtn = document.getElementById('backedUp');
+        const unlockBtn = document.getElementById('unlockBtn');
+        const inputMnemonic = document.getElementById('InputMnemonic');
+        const importedBtn = document.getElementById('imported');
+
+        function backFromCreate() {
+            document.getElementById("createScreen").classList.add('hidden');
+            document.getElementById("Menu").classList.remove('hidden');
+
+        }
+
+        function backFromImport() {
+            document.getElementById("importScreen").classList.add('hidden');
+            document.getElementById("Menu").classList.remove('hidden');
+
+        }
+
+        ipcRenderer.on('WALLET_EXIST', (event, args) => {
+            document.getElementById("unlock").classList.remove('hidden');
+            document.getElementById("loading").classList.add('hidden');
+        });
+        ipcRenderer.on('WALLET_DOESNT_EXIST', (event, args) => {
+            document.getElementById("Menu").classList.remove('hidden');
+            document.getElementById("loading").classList.add('hidden');
+        });
+        ipcRenderer.on('WRONG_PASSWORD', (event, args) => {
+            var wrongPassword = document.getElementById("wrongPassword");
+            wrongPassword.classList.remove("invisible");
+            setTimeout(function () { snackbar.className = snackbar.className.replace("show", ""); }, 3000);
+        });
+
+        function removeWrongLegend() {
+            var wrongPassword = document.getElementById("wrongPassword");
+            wrongPassword.classList.remove("invisible");
+            wrongPassword.classList.add("invisible");
+        }
+
+        function removeInvalidSeed() {
+            invalidText.classList.remove("invisible");
+            invalidText.classList.add("invisible");
+        }
+        function showInvalidSeed() {
+            invalidText.classList.remove("invisible");
+        }
+
+        unlockBtn.addEventListener('click', function () {
+            unlockWallet();
+        });
+
+        importbtn.addEventListener('click', function () {
+            document.getElementById("Menu").classList.add('hidden');
+            document.getElementById("importScreen").classList.remove('hidden');
+        })
+
+        function unlockWallet() {
+            pass = document.getElementById("unlockPass").value;
+            ipcRenderer.send('UNLOCK_WALLET', {
+                password: pass
+            });
+            return false;
+        }
+
+        importedBtn.addEventListener('click', function () {
+            if (mnemonicValid) {
+                document.getElementById("importScreen").classList.add('hidden');
+                document.getElementById("setPass").classList.remove('hidden');
+            }
+        })
+
+        backedUpbtn.addEventListener('click', function () {
+            document.getElementById("createScreen").classList.add('hidden');
+            document.getElementById("setPass").classList.remove('hidden');
+        });
+
+        function validateMnemonic() {
+            if (bip39.validateMnemonic(inputMnemonic.value.trim())) {
+                mnemonic = inputMnemonic.value.trim();
+                importedBtn.classList.remove("disabledBtn");
+                importedBtn.classList.add("btn");
+                mnemonicValid = true;
+                removeInvalidSeed();
+            } else {
+                showInvalidSeed();
+                importedBtn.classList.remove("btn");
+                importedBtn.classList.remove("disabledBtn");
+                importedBtn.classList.add("disabledBtn");
+                mnemonicValid = false;
+            }
+
+        }
+
+        createbtn.addEventListener('click', function () {
+            document.getElementById("Menu").classList.add('hidden');
+            document.getElementById("createScreen").classList.remove('hidden');
+            mnemonic = generate_mnemonic24();
+            const mnemonicField = document.getElementById('mnemonicField');
+            const mnemonicSpinner = document.getElementById('mnemonicSpinner');
+            const mnemonicArray = mnemonic.split(' ');
+            mnemonicField.removeChild(mnemonicSpinner);
+            mnemonicArray.forEach(word => {
+                mnemonicField.innerHTML += `<div class="bg-baseLigth rounded-full px-2 mx-1 shadow-sm">${word}</div>`;
+            });
+        });
+
+        copybtn.addEventListener('click', function () {
+            var text = mnemonic;
+            var snackbar = document.getElementById("snackbar");
+            navigator.clipboard.writeText(text).then(function () {
+                snackbar.classList.add("bg-green-500");
+                snackbar.innerHTML = 'Seed copied to clipboard';
+                snackbar.classList.add("show");
+                setTimeout(function () { snackbar.className = snackbar.className.replace("show", ""); }, 3000);
+            }, function (err) {
+                snackbar.classList.add("bg-red-500");
+                snackbar.innerHTML = "Couldn't copy seed to clipboard";
+                snackbar.classList.add("show");
+                setTimeout(function () { snackbar.className = snackbar.className.replace("show", ""); }, 3000);
+            });
+
+        });
+
+        encryptbtn.addEventListener('click', function () {
+            encrypt()
+        });
+
+        function encrypt() {
+            if (isValid) {
+                ipcRenderer.send('CREATE_NEW_WALLET', {
+                    mnemonic: mnemonic,
+                    password: pass
+                });
+                document.getElementById("setPass").classList.add('hidden');
+                document.getElementById("loading").classList.remove('hidden');
+            }
+            return false;
+        }
+
+        function validate() {
+            pass = document.getElementById("inputPass").value;
+            const confirmPass = document.getElementById("inputConfirmPass").value;
+            if (pass.length > 7) {
+                lenDiv.classList.remove("text-red-700");
+                lenDiv.classList.add("text-green-700");
+                lenDiv.classList.remove("bg-red-200");
+                lenDiv.classList.add("bg-green-200");
+                lenText.innerHTML = "Minimum length reached.";
+                lenText.classList.remove("text-red-700");
+                lenText.classList.add("text-green-700");
+                lenSvg.innerHTML = '<path x-show="password.length > 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />';
+            } else {
+                lenDiv.classList.remove("text-green-700");
+                lenDiv.classList.add("text-red-700");
+                lenDiv.classList.remove("bg-green-200");
+                lenDiv.classList.add("bg-red-200");
+                lenText.innerHTML = "At least 8 characters required.";
+                lenText.classList.remove("text-green-700");
+                lenText.classList.add("text-red-700");
+                lenSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />';
+
+            }
+            if (pass == confirmPass) {
+                matchDiv.classList.remove("text-red-700");
+                matchDiv.classList.add("text-green-700");
+                matchDiv.classList.remove("bg-red-200");
+                matchDiv.classList.add("bg-green-200");
+                matchText.innerHTML = "Passwords match.";
+                matchText.classList.remove("text-red-700");
+                matchText.classList.add("text-green-700");
+                matchSvg.innerHTML = '<path x-show="password.length > 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />';
+            } else {
+                matchDiv.classList.remove("text-green-700");
+                matchDiv.classList.add("text-red-700");
+                matchDiv.classList.remove("bg-green-200");
+                matchDiv.classList.add("bg-red-200");
+                matchText.innerHTML = "Passwords don't match.";
+                matchText.classList.remove("text-green-700");
+                matchText.classList.add("text-red-700");
+                matchSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />';
+            }
+            if (pass.length > 7 && pass == confirmPass) {
+                encryptbtn.classList.remove("disabledBtn");
+                encryptbtn.classList.add("btn");
+                isValid = true;
+            } else {
+                encryptbtn.classList.remove("btn");
+                encryptbtn.classList.add("disabledBtn");
+                isValid = false;
+            }
+        }
+
+        function checkWallet() {
+            ipcRenderer.send('START_BACKGROUND_VIA_MAIN');
+        }
+
+        function minimize() {
+            ipcRenderer.send('MINIMIZE_UNLOCK_WINDOW');
+        }
+        function closeWindow() {
+            ipcRenderer.send('CLOSE_UNLOCK_WINDOW');
+        }
+    </script>
+</body>
+
+</html>

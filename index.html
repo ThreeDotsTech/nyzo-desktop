@@ -3,28 +3,23 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>Nyzo wallet</title>
     <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
     <link rel="stylesheet" href="output.css">
-    <style>
-        .titlebar {
-            -webkit-user-select: none;
-            -webkit-app-region: drag;
-        }
-    </style>
-    <script src="Chart.bundle.js"></script>
 </head>
 
-<body class="relative flex flex-col h-screen bg-baseLigth" onload="InitializeWallet()">
-    <!-- Canvas used to display the bar-->
-    <div class="absolute z-0">
-        <canvas id="myChart" height="600" width="800"></canvas>
+<body class="relative flex flex-col h-screen bg-baseLigth overflow-hidden select-none" onload="InitializeWallet()">
+    <div id="errorIcon" class="absolute fill-current w-12 h-12 text-red-600 top-0 right-0 mr-8 mt-12 invisible">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+                d="M7.092 5.099l1.439-.205-.439-3.083-1.44.204.44 3.084zm-2.211 3.445l.205-1.44-3.084-.44-.205 1.441 3.084.439zm-.494-5.163l-1.03 1.03 2.203 2.204 1.029-1.03-2.202-2.204zm12.541 15.565l-1.439.205.438 3.083 1.441-.204-.44-3.084zm2.21-3.446l-.206 1.441 3.085.439.205-1.44-3.084-.44zm.495 5.163l1.028-1.029-2.204-2.204-1.027 1.03 2.203 2.203zm2.64-18.904c2.344 2.346 2.344 6.149.001 8.494l-3.896 3.896-1.417-1.417 3.895-3.895c1.562-1.562 1.562-4.101 0-5.662-1.562-1.562-4.101-1.562-5.662 0l-3.894 3.895-1.416-1.416 3.895-3.895c2.344-2.345 6.147-2.345 8.494 0zm-8.138 16.631l-3.852 3.851c-2.344 2.347-6.146 2.345-8.494.001-2.344-2.346-2.345-6.149 0-8.494l3.854-3.851 1.414 1.415-3.851 3.851c-1.562 1.562-1.562 4.102-.001 5.663 1.563 1.561 4.102 1.561 5.664-.001l3.85-3.851 1.416 1.416z" />
+        </svg>
     </div>
     <!-- End of the canvas-->
 
     <!-- The title bar-->
-    <div class="flex flex-row justify-between titlebar pr-4 py-2 my-2 z-50 ">
+    <div class="flex flex-row justify-between titlebar pr-4 py-4 z-50 ">
         <div class="pl-8 w-24 text-secondaryLigth">
             <svg class=" object-fill fill-current" xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink" id="svg" viewBox="0, 0, 400,92.9530201342282">
@@ -41,40 +36,42 @@
                     <path
                         d="M8.465 16.95l2.828 3.05h-7.293v-7.293l3.051 2.829 8.484-8.486-2.828-3.05h7.293v7.292l-3.051-2.828z" />
                 </svg>
-                <div class="absolute hover:hidden rounded-full h-4 w-4  bg-tdBlue  mr-2">
+                <div class="absolute hover:bg-transparent rounded-full h-4 w-4  bg-tdBlue  mr-2">
 
                 </div>
             </div>
-            <div class="relative flex justify-center items-center rounded-full h-4 w-4 bg-tdGreen mr-2 text-black">
+            <div onclick="minimize()"
+                class="relative flex justify-center items-center rounded-full h-4 w-4 bg-tdGreen mr-2 text-black">
                 <a class=" object-fill fill-current">
                     -
                 </a>
-                <div class="absolute hover:hidden rounded-full h-4 w-4  bg-tdGreen  mr-2">
+                <div class="absolute hover:bg-transparent rounded-full h-4 w-4  bg-tdGreen  mr-2">
 
                 </div>
             </div>
-            <div class="relative flex justify-center items-center rounded-full h-4 w-4  bg-tdRed mr-2 text-black">
+            <div onclick="closeWindow()"
+                class="relative flex justify-center items-center rounded-full h-4 w-4  bg-tdRed mr-2 text-black">
                 <svg class=" object-fill fill-current" width="7" height="24" xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24">
                     <path
                         d="M23.954 21.03l-9.184-9.095 9.092-9.174-2.832-2.807-9.09 9.179-9.176-9.088-2.81 2.81 9.186 9.105-9.095 9.184 2.81 2.81 9.112-9.192 9.18 9.1z" />
                 </svg>
 
-                <div class="absolute hover:hidden rounded-full h-4 w-4  bg-tdRed  mr-2">
+                <div class="absolute hover:bg-transparent rounded-full h-4 w-4  bg-tdRed  mr-2">
 
                 </div>
             </div>
         </div>
         </a>
     </div>
-    <!-- Here lies the titlebar-->
     <!-- This is the main window-->
     <div class="flex flex-row h-full z-10 ">
         <!-- Starts Side Menu-->
-        <div class="w-2/12 h-full pt-8 pb-12 px-8 text-white">
+        <div class="w-2/12 h-full pt-8 pb-12 px-8 text-white ">
             <div class="flex flex-col justify-between items-center rounded-full bg-secondaryLigth h-full shadow-inner py-10
             ">
-                <a href="" class="flex justify-center items-center w-16 h-16 rounded-full shadow-inner">
+                <a onclick="changeWindow(0)"
+                    class="flex justify-center items-center w-16 h-16 rounded-full   cursor-pointer">
                     <svg class=" object-fill fill-current" width="30" height="24" xmlns="http://www.w3.org/2000/svg"
                         viewBox="0, 0, 100,92.9530201342282">
                         <path id="path0"
@@ -82,21 +79,24 @@
                             stroke="none" />
                     </svg>
                 </a>
-                <a href="" class="flex justify-center items-center w-16 h-16 rounded-full">
+                <a onclick="changeWindow(1)"
+                    class="flex justify-center items-center w-16 h-16 rounded-full cursor-pointer">
                     <svg class=" object-fill fill-current" width="30" height="24" xmlns="http://www.w3.org/2000/svg"
                         viewBox="0, 0, 24,24">
                         <path
                             d="M24 0l-6 22-8.129-7.239 7.802-8.234-10.458 7.227-7.215-1.754 24-12zm-15 16.668v7.332l3.258-4.431-3.258-2.901z" />
                     </svg>
                 </a>
+                <!--
                 <a href="" class="flex justify-center items-center w-16 h-16 rounded-full">
                     <svg class=" object-fill fill-current" width="50" height="24" xmlns="http://www.w3.org/2000/svg"
                         viewBox="0, 0, 24,24">
                         <path
                             d="M10.118 16.064c2.293-.529 4.428-.993 3.394-2.945-3.146-5.942-.834-9.119 2.488-9.119 3.388 0 5.644 3.299 2.488 9.119-1.065 1.964 1.149 2.427 3.394 2.945 1.986.459 2.118 1.43 2.118 3.111l-.003.825h-15.994c0-2.196-.176-3.407 2.115-3.936zm-10.116 3.936h6.001c-.028-6.542 2.995-3.697 2.995-8.901 0-2.009-1.311-3.099-2.998-3.099-2.492 0-4.226 2.383-1.866 6.839.775 1.464-.825 1.812-2.545 2.209-1.49.344-1.589 1.072-1.589 2.333l.002.619z" />
                     </svg>
-                </a>
-                <a href="" class="flex justify-center items-center w-16 h-16 rounded-full">
+                </a>-->
+                <a onclick="changeWindow(2)"
+                    class="flex justify-center items-center w-16 h-16 rounded-full cursor-pointer">
                     <svg class=" object-fill fill-current" width="30" height="24" xmlns="http://www.w3.org/2000/svg"
                         viewBox="0, 0, 24,24">
                         <path
@@ -105,155 +105,1032 @@
                 </a>
             </div>
         </div>
-        <!-- The side menu has died-->
-
         <!-- Starts Home Window -->
-        <div class="w-full py-10 pr-10">
-            <div class="flex flex-col h-full w-1/2 ">
-                <p class="text-3xl select-none">
-                    Balance
-                </p>
+        <div id="0" class="w-full py-10 pr-10">
+            <div id="innerMainWindow" class="relative flex flex-col h-full w-full hidden ">
+                <div id="addAccountButton"
+                    class="absolute bottom-0 right-0 transform translate-y-5    btn flex items-center rounded-full pl-4 flex-grow-0 flex-shrink-0 self-start">
+                    <a class="flex-grow-0 flex-shrink-0">Add account</a>
+                    <svg class="fill-current ml-2 w-5 h-5 my-2 mr-2" xmlns="http://www.w3.org/2000/svg" width="24"
+                        height="24" viewBox="0 0 24 24">
+                        <path d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z" /></svg>
+                </div>
+                <div class="flex items-center justify-between overflow-visible flex-no-wrap h-32">
+                    <div class="flex flex-col h-full w-full">
+                        <div class="flex">
+                            <p class="text-3xl">
+                                Balance
+                            </p>
+                        </div>
+                        <div class="flex w-full h-full select-none items-end">
+                            <div id="Balance"></div>
+                            <span class="text-xl mb-4">∩</span>
+                        </div>
+                    </div>
+                    <div id="splide1" class="splide w-64 h-20">
+                        <div class="splide__track">
+                            <div id="accountsCarrousel" class="splide__list">
 
-                <p class="text-6xl select-none">
-                    <span id="Balance"></span> <span class="text-xl">∩</span>
-                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-300 w-full rounded-lg shadow-inner p-2 overflow-auto" style="height: 18rem">
+
+                    <table class="table-auto">
+                        <thead>
+                            <tr class="rounded-lg text-sm font-medium text-gray-700 text-left shadow-xl"
+                                style="font-size: 0.9674rem">
+                                <th class="px-4 py-2 w-full bg-baseLigth">
+                                    <div class="w-full">Address</div>
+                                </th>
+                                <th class="px-4 py-2 bg-baseLigth">
+                                    <div class="w-full">Block</div>
+                                </th>
+                                <th class="px-4 py-2 bg-baseLigth">
+                                    <div class="w-full">Amount</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <thead>
+                            <tr class="" style="font-size: 0.9674rem">
+                                <th class="px-4 py-1 w-full">
+                                    <div class="w-full"></div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTable" class="text-sm font-normal text-gray-700 mt-5">
+                        </tbody>
+                    </table>
+                    <div id="transactionsField"></div>
+
+                </div>
             </div>
-            <div class="w-1/2"></div>
+            <div id="loading" class="flex w-full h-full items-center justify-center ">
+                <div class="spinner">
+                    <div class="bounce1 bg-tdBlue"></div>
+                    <div class="bounce2 bg-tdGreen"></div>
+                    <div class="bounce3 bg-tdRed "></div>
+                </div>
+            </div>
         </div>
-        <!-- What a shame, it was a good window -->
+        <div id="1" class="w-full py-10 pr-10 hidden">
+            <div class="flex items-center justify-between overflow-visible flex-no-wrap h-32">
+                <div class="flex flex-col h-full w-56">
+                    <div class="flex">
+                        <p class="text-3xl">
+                            Send from
+                        </p>
+                    </div>
+                    <div class="flex select-none items-end w-full ">
+                        <div id="balanceSend">
+
+                        </div>
+                        <span class="text-xl mb-4">∩</span>
+                    </div>
+                </div>
+                <div id="splide2" class="splide w-64 h-20">
+                    <div class="splide__track">
+
+                        <div id="accountsCarrousel" class="splide__list">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col w-full-h-full justify-center items-center">
+                <div onclick="copyID()"
+                    class="flex justify-between w-full mx-5 py-6 px-4 shadow-inner rounded-lg bg-gray-300 text-gray-600">
+                    <div id="idField" class="ml-4">
+                    </div>
+                    <svg class="w-5 h-5 mr-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M22 6v16h-16v-16h16zm2-2h-20v20h20v-20zm-24 17v-21h21v2h-19v19h-2z" /></svg>
+                </div>
+                <div class="flex w-full mt-2">
+                    <div class="w-1/2 px-4">
+                        <form>
+                            <div class="mx-auto max-w-lg">
+                                <div class="py-2">
+                                    <span class="px-1 text-sm text-gray-600">Recipient ID</span>
+                                    <input id="recipientIdentifierInput" type="text" class="input px-3 py-2"
+                                        onblur="recipientIdentifierInputOnBlur()" />
+                                </div>
+                                <div class="py-2"></div>
+                                <span class="px-1 text-sm text-gray-600">Data</span>
+                                <div class="relative">
+                                    <input id="senderDataInput" type="text" class="input px-3 py-2"
+                                        onblur="senderDataInputOnBlur();" maxlength="32" />
+
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="w-1/2 px-4">
+                        <form>
+                            <form>
+                                <div class="mx-auto max-w-lg">
+                                    <div class="py-2">
+                                        <span class="px-1 text-sm text-gray-600">Amount to send</span>
+                                        <div class="relative">
+                                            <input id="amountToSendInput" type="text" class="input px-3 py-2"
+                                                onchange="amountToSendInputOnChange();" />
+                                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 font-bold text-gray-500 cursor-pointer"
+                                                onclick="putMaxAmount(); amountToSendInputOnChange();">
+                                                MAX
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="py-2"></div>
+                                    <span class="px-1 text-sm text-gray-600">Recipient will receive</span>
+                                    <div class="relative">
+                                        <input id="recipientWillReceiveInput" type="text" class="input px-3 py-2"
+                                            onchange="recipientWillReceiveInputOnChange();" />
+                                    </div>
+                                </div>
+                            </form>
+                        </form>
+                    </div>
+                </div>
+                <div class="flex justify-between w-full">
+                    <div class="w-1/2 flex justify-center">
+                        <div id="sendErrorDiv" class="flex items-center hidden">
+                            <div id="lenDiv" class=" rounded-full p-1 fill-current bg-red-200">
+                                <svg id="lenSvg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </div>
+                            <span id="sendError" class="font-medium text-sm ml-3 text-red-700 ">Invalid
+                                Identifier</span>
+                        </div>
+                    </div>
+                    <div class="px-4 w-1/2">
+                        <div onclick="submitTransactionClick();" class="btn mt-6 px-6 py-3 ">
+                            Send
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="2" class="w-full py-10 pr-10 hidden">
+            <div class="flex items-center justify-between overflow-visible flex-no-wrap h-16">
+                <div class="flex flex-col h-full w-56">
+                    <div class="flex">
+                        <p class="text-3xl">
+                            Settings
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col w-full-h-full ">
+                <div class="text-xl">
+                    <div class="flex">
+                        Add external account
+                        <div id="privKeyError" class="flex items-center hidden">
+                            <div id="lenDiv" class="ml-32 rounded-full p-1 fill-current bg-red-200">
+                                <svg id="lenSvg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </div>
+                            <span id="sendError" class="font-medium text-sm ml-3 text-red-700 ">Invalid
+                                private key</span>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="flex w-full">
+                    <div class="w-full">
+                        <span class="px-1 text-sm text-gray-600">Private key</span>
+                        <div class="flex w-full items-center">
+                            <input id="privateKeyInput" onblur="privateKeyInputOnBlur();" placeholder="key_" type="text"
+                                class="input px-3 py-2 w-full" onblur="recipientIdentifierInputOnBlur()" />
+                            <a id="importbtn" class="btn mx-4 py-1 px-3"
+                                onclick="importExternalPrivateKet();">Import</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-xl mt-3">
+                    Change update period
+                </div>
+                <div class="w-full">
+                    <span class="px-1 text-sm text-gray-600">Seconds</span>
+                    <div class="flex flex-wrap w-1/4">
+                        <div class="flex w-8/12">
+                            <input type="text" id="secondsInput" onchange="setSeconds()"
+                                class="text-center block rounded-l-lg w-full bg-white border-t-2 border-l-2 border-b-2 border-gray-300 shadow-md placeholder-gray-500 focus:bg-white focus:border-secondaryLigth focus:outline-none">
+                        </div>
+                        <div class="flex flex-col w-4/12">
+                            <a onclick="secondsUp();" class="btn-no-border rounded-tr-md px-1">
+                                +
+                            </a>
+                            <a onclick="secondsDown()" class="btn-no-border rounded-br-md px-1">
+                                -
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-xl mt-3">
+                    Show my seeds
+                </div>
+                <div class="w-full my-2">
+                    <a onclick="showKeys()" class="btn py-2 px-3">Show</a>
+                </div>
+                <a href="" class="text-xl mt-3">
+                    Delete my wallet
+                </a>
+                <div class="flex w-full justify-between items-baseline">
+
+                    <div class="w-full my-2">
+                        <a onclick="showDeleteHover();" class="warning-btn py-2 px-3">Delete</a>
+                    </div>
+                    <div class="flex w-full flex-col items-end">
+                        <div class="flex w-full items-start justify-end">
+                            <div class="mr-1">Made with ♥ by</div>
+                            <div class="w-32">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1668.05 427.05">
+                                    <defs>
+                                        <style>
+                                            .cls-1 {
+                                                fill: #598fd1;
+                                            }
+
+                                            .cls-2 {
+                                                fill: #81ccb1;
+                                            }
+
+                                            .cls-3 {
+                                                fill: #e086bc;
+                                            }
+                                        </style>
+                                    </defs>
+                                    <g id="Layer_2" data-name="Layer 2">
+                                        <g id="Layer_2-2" data-name="Layer 2">
+                                            <circle class="cls-1" cx="632" cy="179.01" r="104" />
+                                            <circle class="cls-2" cx="830" cy="178.01" r="106" />
+                                            <circle class="cls-3" cx="1271" cy="179.01" r="92" />
+                                            <path
+                                                d="M0,0H275V99s14-26.66,65-26c77,1,79,80,79,80V281H362V175s5-54-39-54c-51,0-48,57-48,57V281H218V53H141V281H80V53H0Z" />
+                                            <path d="M545,75v51c-72-9-68,50-68,50V281H420V75h51v38S470,72,545,75Z" />
+                                            <path
+                                                d="M737,178a106.88,106.88,0,1,0-4.81,31.82H671S667,239,630,239s-46.5-30-46.5-46.5L736,193l0-.06q.15-1.08.27-2.16A107.76,107.76,0,0,0,737,178ZM585,152c0-9,10-35,47-35s42,35,42,35Z" />
+                                            <path
+                                                d="M937,178a106.88,106.88,0,1,0-4.81,31.82H871S867,239,830,239s-46.5-30-46.5-46.5L936,193l0-.06q.15-1.08.27-2.16A107.76,107.76,0,0,0,937,178ZM785,152c0-9,10-35,47-35s42,35,42,35Z" />
+                                            <path
+                                                d="M1025,0H930V281h117s122-9,122-141C1169-4,1025,0,1025,0Zm17,229H991V52h34s82-7,82,90C1107,224,1042,229,1042,229Z" />
+                                            <path
+                                                d="M1269,71a107,107,0,1,0,107,107A107,107,0,0,0,1269,71Zm0,164a57,57,0,1,1,57-57A57,57,0,0,1,1269,235Z" />
+                                            <path
+                                                d="M1388,75h-34v49h34v89s-6,63,50,68h59V232h-36s-16,4-16-26V124h46V75h-46V17h-57Z" />
+                                            <path
+                                                d="M1612,223c0-23.09-43-23-43-23-94-11-86-48-86-66s12-65,96-63,86,71,86,71h-56c2-14-16-28-35-28s-34,6-35,19,3,16,68,23,61,56,61,56,5,72-93,72-96-74-96-74h54s-3,36,39,36S1612,223,1612,223Z" />
+                                            <path d="M102.09,327.54H76.88v-9.1h61.37v9.1H112.92v73.8H102.09Z" />
+                                            <path
+                                                d="M141.7,373.55c.24,14.63,9.59,20.66,20.42,20.66,7.74,0,12.42-1.35,16.48-3.08l1.84,7.75c-3.81,1.72-10.33,3.69-19.8,3.69-18.33,0-29.27-12.05-29.27-30s10.57-32.1,27.92-32.1c19.43,0,24.6,17.1,24.6,28a41.48,41.48,0,0,1-.37,5.05Zm31.73-7.75c.12-6.89-2.83-17.59-15-17.59-11,0-15.75,10.08-16.61,17.59Z" />
+                                            <path
+                                                d="M237,399.13c-2.83,1.47-9.1,3.44-17.1,3.44-17.95,0-29.64-12.17-29.64-30.38s12.55-31.61,32-31.61a36.1,36.1,0,0,1,15,3.08L234.81,352c-2.59-1.48-6.64-2.83-12.55-2.83-13.65,0-21,10.09-21,22.51,0,13.78,8.85,22.26,20.66,22.26A30.85,30.85,0,0,0,235.18,391Z" />
+                                            <path
+                                                d="M247,314h10.83v37.15h.24a20.16,20.16,0,0,1,7.75-7.63,22.33,22.33,0,0,1,11.07-3.07c8,0,20.79,4.92,20.79,25.46v35.42H286.84V367.15c0-9.59-3.57-17.71-13.78-17.71a15.54,15.54,0,0,0-14.51,10.82,13,13,0,0,0-.74,5.17v35.91H247Z" />
+                                            <path
+                                                d="M312.54,357.92c0-6.15-.12-11.19-.49-16.11h9.59l.62,9.84h.25c2.95-5.66,9.84-11.19,19.68-11.19,8.24,0,21,4.92,21,25.34v35.54H352.4V367c0-9.6-3.57-17.59-13.78-17.59a15.38,15.38,0,0,0-14.52,11.07,15.58,15.58,0,0,0-.73,5v35.79H312.54Z" />
+                                            <path
+                                                d="M432,371.09c0,22-15.26,31.61-29.65,31.61-16.11,0-28.53-11.81-28.53-30.63,0-19.93,13-31.61,29.52-31.61C420.41,340.46,432,352.88,432,371.09Zm-47.24.61c0,13,7.51,22.88,18.08,22.88,10.34,0,18.09-9.72,18.09-23.13,0-10.08-5.05-22.87-17.84-22.87S384.74,360.38,384.74,371.7Z" />
+                                            <path d="M442.92,314h10.83v87.33H442.92Z" />
+                                            <path
+                                                d="M523.12,371.09c0,22-15.26,31.61-29.65,31.61-16.11,0-28.53-11.81-28.53-30.63,0-19.93,13-31.61,29.52-31.61C511.55,340.46,523.12,352.88,523.12,371.09Zm-47.24.61c0,13,7.51,22.88,18.09,22.88,10.33,0,18.08-9.72,18.08-23.13,0-10.08-5-22.87-17.84-22.87S475.88,360.38,475.88,371.7Z" />
+                                            <path
+                                                d="M585.35,341.81c-.24,4.31-.49,9.1-.49,16.36v34.56c0,13.66-2.7,22-8.48,27.19-5.79,5.41-14.15,7.13-21.65,7.13-7.14,0-15-1.72-19.81-4.92l2.71-8.24a33.6,33.6,0,0,0,17.47,4.67c11.07,0,19.18-5.78,19.18-20.78v-6.65H574c-3.32,5.54-9.72,10-18.94,10-14.76,0-25.34-12.55-25.34-29,0-20.17,13.16-31.61,26.81-31.61,10.33,0,16,5.41,18.58,10.33h.24l.49-9ZM574.16,365.3a15.51,15.51,0,0,0-.61-4.92c-2-6.27-7.26-11.44-15.13-11.44-10.34,0-17.72,8.74-17.72,22.51,0,11.69,5.91,21.41,17.59,21.41a15.83,15.83,0,0,0,15-11.07,18.72,18.72,0,0,0,.86-5.78Z" />
+                                            <path
+                                                d="M611.43,325.08c.12,3.69-2.58,6.64-6.89,6.64a6.44,6.44,0,0,1-6.52-6.64,6.59,6.59,0,0,1,6.77-6.76A6.42,6.42,0,0,1,611.43,325.08Zm-12.06,76.26V341.81H610.2v59.53Z" />
+                                            <path
+                                                d="M631.48,373.55c.24,14.63,9.59,20.66,20.42,20.66,7.74,0,12.42-1.35,16.48-3.08l1.84,7.75c-3.81,1.72-10.33,3.69-19.8,3.69-18.33,0-29.28-12.05-29.28-30s10.58-32.1,27.93-32.1c19.43,0,24.6,17.1,24.6,28a41.48,41.48,0,0,1-.37,5.05Zm31.73-7.75c.12-6.89-2.83-17.59-15-17.59-11,0-15.75,10.08-16.61,17.59Z" />
+                                            <path
+                                                d="M682.89,390.27a28.4,28.4,0,0,0,14.27,4.31c7.87,0,11.56-3.94,11.56-8.86,0-5.16-3.07-8-11.07-11-10.7-3.81-15.74-9.71-15.74-16.85,0-9.59,7.74-17.46,20.54-17.46a29.68,29.68,0,0,1,14.63,3.69l-2.7,7.87a23.14,23.14,0,0,0-12.18-3.44c-6.4,0-10,3.69-10,8.11,0,4.92,3.56,7.14,11.31,10.09,10.34,3.94,15.63,9.1,15.63,18,0,10.45-8.12,17.83-22.27,17.83a34,34,0,0,1-16.73-4.06Z" />
+                                        </g>
+                                    </g>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="font-thin">Beta v0.1</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div id="snackbar" class="text-white z-50"></div>
     </div>
-    <!-- This WAS the main window dead-->
+
+    <div id="hover"
+        class="absolute flex items-center justify-center w-full h-full bg-gray-500 bg-opacity-25 z-40 py-40 pl-56 pr-32 hidden">
+        <div class="w-full h-full bg-baseLigth rounded-lg justify-between items-center flex flex-col p-5">
+            <div id="animation">
+
+            </div>
+            <div id="hoverText"></div>
+            <div class="px-32 w-full flex justify-center"><a onclick="closeHover();" class="btn w-full">Ok</a></div>
+        </div>
+    </div>
+
+    <div id="hover2"
+        class="absolute flex items-center justify-center w-full h-full bg-gray-500 bg-opacity-25 z-40 py-20 pl-48 pr-20 hidden">
+
+        <div class="w-full h-full bg-baseLigth rounded-lg items-center flex flex-col p-5">
+            <div class="flex w-full items-center justify-between mb-1">
+                <div class="text-xl mb-1">
+                    Your mnemonic seed
+                </div>
+                <a id="copy" class="btn rounded-full mr-4">
+                    <svg class="w-5 h-5 fill-current m-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M22 6v16h-16v-16h16zm2-2h-20v20h20v-20zm-24 17v-21h21v2h-19v19h-2z" /></svg>
+                </a>
+            </div>
+            <div id="mnemonicField"
+                class="flex flex-wrap bg-gray-300 items-center justify-center h-32 rounded-md shadow-inner">
+
+            </div>
+            <div class="flex w-full items-center justify-between">
+                <div class="text-xl my-1">
+                    Individual Keypairs
+                </div>
+                <a class=" text-gray-400 mr-4">
+                    Tap to copy Private Key
+                </a>
+            </div>
 
 
+            <div id="keysField"
+                class="flex flex-wrap bg-gray-300 items-start justify-start h-40 rounded-md shadow-inner overflow-auto">
+
+            </div>
+            <div class="px-32 w-full flex justify-center mt-4"><a onclick="closeHover2();"
+                    class="btn py-2 w-full">Ok</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="hover3"
+        class="absolute flex items-center justify-center w-full h-full bg-gray-500 bg-opacity-25 z-40 py-40 pl-56 pr-32 hidden">
+        <div class="w-full h-full bg-baseLigth rounded-lg justify-between items-center flex flex-col p-5">
+            <div class="text-4xl text-red-500">
+                Warning!
+            </div>
+            <div id="hoverText">
+                If you delete your wallet all imported accounts will be lost and you won't be able to recover them using
+                the
+                mnemonic seed. Make sure you have a backup of your mnemonic seed and all the private keys from the
+                imported accounts before deleting your wallet.
+            </div>
+            <div class="w-full flex justify-center mt-2">
+                <a onclick="closeHover3();" class="btn py-2 w-2/3 mx-4">Cancel</a>
+                <a onclick="deleteWallet();" class="warning-btn py-2 w-1/3 mx-4"> Delete</a>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script src="js/nyzo/nacl.js"></script>
+    <script src="js/transaction.js"></script>
+    <script src="js/displayableTransaction.js"></script>
+    <script src="js/account.js"></script>
+    <script src="js/wallet.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/splide.min.js"></script>
+    <script src="js/nyzo/nyzoStrings.js"></script>
+    <script src="js/nyzo/sha256.js"></script>
+    <script src="js/nyzo/constants.js"></script>
+    <script src="js/nyzo/byteBuffer.js"></script>
+    <script src="js/nyzo/messaging.js"></script>
+    <script src="js/nyzo/functionality.js"></script>
+    <script src="js/anime.min.js"></script>
     <script>
-        function InitializeWallet() {
-            //Here we must load the balance
-            var balance = "123.02";
-            //Then we set the balance
-            document.getElementById("Balance").innerHTML = balance;
-            //We now load the address
-        }
-    </script>
-    <!-- The script to display the graph-->
-    <script>
-        function formatDate(date) {
-            var d = new Date(date),
-                month = '' + (d.getMonth() + 1),
-                day = '' + d.getDate(),
-                year = d.getFullYear();
-
-            if (month.length < 2)
-                month = '0' + month;
-            if (day.length < 2)
-                day = '0' + day;
-
-            return [year, month, day].join('-');
-        }
-
-
-
-        var ts = Math.round((new Date()).getTime() / 1000);
-        var url = `https://api.coingecko.com/api/v3/coins/nyzo/market_chart/range?vs_currency=usd&from=${ts - 7884000 * 1.1}&to=${ts}`;
-        prices = [];
-        time = [];
-        fetch(url)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (jsonResponse) {
-
-                for (var i = 0; i < jsonResponse['prices'].length; i++) {
-                    time.push((formatDate(new Date(jsonResponse['prices'][i][0]))));
-                    prices.push(Math.floor(jsonResponse['prices'][i][1] * 100) / 100);
-                }
-                var ctx = document.getElementById('myChart').getContext('2d');
-                var gradientNyzo = ctx.createLinearGradient(0, 600, 0, 0);
-                gradientNyzo.addColorStop(0, "rgba(255, 255, 255, 0)");
-                gradientNyzo.addColorStop(1, "rgba(239, 124, 124, 0.4)");
-                var data = {
-                    labels: time,
-                    datasets: [
-                        {
-                            label: "Price",
-                            backgroundColor: gradientNyzo
-                            ,
-                            borderColor:
-                                'rgba(255, 0, 0, 0.1)',
-
-                            data: prices
-                        },
-                    ]
-                };
-                var myChart = new Chart(ctx, {
-                    type: 'line',
-                    data: data,
-                    options: {
-                        layout: {
-                            padding: {
-                                left: 0,
-                                right: 0,
-                                top: 50,
-                                bottom: 0
-                            }
-                        },
-                        scales: {
-                            yAxes: [{
-                                display: false,
-                                ticks: {
-                                    beginAtZero: true
-                                }
-                            }],
-                            xAxes: [{
-                                display: false,
-                                ticks: {
-                                }
-                            }]
-                        },
-                        legend: {
-                            display: false,
-                            position: 'bottom',
-                            labels: {
-                                position: 'left',
-                                boxWidth: 15
-                            }
-                        },
-                        elements: {
-                            point: {
-                                radius: 0,
-                                hitRadius: 2
-
-
-                            }
-                        },
-                        animation: {
-                            duration: 1500,
-                            easing: 'easeInOutQuart'
-                        }
-                    }
-                });
-            });
-
-
-
-
-
+        var splide = new Splide('#splide1', {
+            classes: {
+                arrows: 'splide__arrows your-class-arrows mt-6',
+                arrow: 'splide__arrow your-class-arrow btn',
+                prev: 'splide__arrow--prev your-class-prev btn',
+                next: 'splide__arrow--next your-class-next btn',
+            },
+            pagination: false
+        });
+        var splide2 = new Splide('#splide2', {
+            classes: {
+                arrows: 'splide__arrows your-class-arrows mt-6',
+                arrow: 'splide__arrow your-class-arrow btn',
+                prev: 'splide__arrow--prev your-class-prev btn',
+                next: 'splide__arrow--next your-class-next btn',
+            },
+            pagination: false
+        });
+        splide.mount();
+        splide2.mount();
 
     </script>
-    <!-- The script to display the graph-->
 
     <!-- The functions to communicate with Python-->
     <script>
+        var wallet;
+        var publicKeys = [];
+        var accounts = [];
+        var allTransactions = [];
+        var activeWindow = 0;
+        var balance = 0;
+        var activeKeypair;
+        var isLoaded = false;
+        var seconds = 7;
+        var intervalID;
         const { ipcRenderer } = require('electron');
+        const bip39 = require("bip39")
+        const { NyzoKey } = require("nyzospace/src/NyzoKey.js")
+        var classTransformer = require('class-transformer');
+        const { serialize } = classTransformer;
+        const { plainToClass } = classTransformer;
+        var nacl = require('./js/nyzo/nacl.js');
+        var privateSeedToImport = '';
+
+        var secondsInput = document.getElementById('secondsInput');
+        var sendError = document.getElementById('sendError');
+        var hover = document.getElementById('hover');
+        var hoverText = document.getElementById('hoverText');
+        var animation = document.getElementById('animation');
+        var mnemonicField = document.getElementById('mnemonicField');
+        var hover2 = document.getElementById('hover2');
+        var hover3 = document.getElementById('hover3');
+        var copyBtn = document.getElementById('copy');
+        var keysField = document.getElementById('keysField');
+
         ipcRenderer.on('MESSAGE_FROM_BACKGROUND_VIA_MAIN', (event, args) => {
             console.log(args);
         });
-        // trigger event to start background process
-        // can be triggered pretty much from anywhere after
-        // you have set up a listener to get the information
-        // back from background process, as I have done in line 13
-        ipcRenderer.send('START_BACKGROUND_VIA_MAIN', {
-            number: 25,
+
+        ipcRenderer.on('WALLET_FROM_CACHE', (event, walletFromCache) => {
+            wallet = plainToClass(Wallet, walletFromCache);
+            loadWallet();
+            updateAccounts().then(function () {
+                changeDisplayedAccount(0);
+                if (!isLoaded) {
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('innerMainWindow').classList.remove('hidden');
+                    isLoaded = true;
+                }
+                splide.refresh();
+                splide2.refresh();
+            });
         });
+
+        splide.on('moved', (newIndex, oldIndex, destIndex) => {
+            changeDisplayedAccount(destIndex, oldIndex);
+        });
+
+        splide2.on('moved', (newIndex, oldIndex, destIndex) => {
+            changeActiveKeypair(newIndex);
+        });
+
+        function changeActiveKeypair(index) {
+            try {
+                activeKeypair = new NyzoKey(wallet.getPrivateKeyOf(publicKeys[index]));
+                document.getElementById('idField').innerHTML = activeKeypair.toNyzoPublicIdentifier();
+                balanceP = document.getElementById('balanceSend');
+                if (accounts[index].balance < 1000) {
+                    balanceP.innerHTML = `<div class="text-6xl">${accounts[index].balance}</div>`;
+                } else if (accounts[index].balance < 100000) {
+                    balanceP.innerHTML = `<div class="text-5xl">${accounts[index].balance}</div>`;
+                } else {
+                    balanceP.innerHTML = `<div class="text-4xl">${accounts[index].balance}</div>`;
+                }
+
+            } catch (error) {
+                setTimeout(function () { changeActiveKeypair(index) }, 100);
+            }
+
+        }
+
+        function secondsUp() {
+            secondsInput.value = parseInt(secondsInput.value) + 1;
+            setSeconds();
+        }
+
+        function secondsDown() {
+            if (secondsInput.value != 7) {
+                secondsInput.value = parseInt(secondsInput.value) - 1;
+                setSeconds();
+            }
+        }
+
+        function setSeconds() {
+            if (!isNaN(secondsInput.value) && secondsInput.value >= 7) {
+                secondsInput.value = Math.floor(secondsInput.value)
+                seconds = secondsInput.value;
+                clearInterval(intervalID);
+                intervalID = setInterval(function () { updateAccounts(); }, seconds * 1000)
+                localStorage.setItem('seconds', seconds);
+            } else {
+                secondsInput.value = seconds;
+            }
+        }
+
+        function copyID() {
+            navigator.clipboard.writeText(activeKeypair.toNyzoPublicIdentifier()).then(function () {
+                snackbar.classList.add("bg-green-500");
+                snackbar.innerHTML = 'Address copied to clipboard';
+                snackbar.classList.add("show");
+                setTimeout(function () { snackbar.className = snackbar.className.replace("show", ""); }, 3000);
+            }, function (err) {
+                snackbar.classList.add("bg-red-500");
+                snackbar.innerHTML = "Couldn't copy address to clipboard";
+                snackbar.classList.add("show");
+                setTimeout(function () { snackbar.className = snackbar.className.replace("show", ""); }, 3000);
+            });
+        }
+
+        function deleteWallet() {
+            ipcRenderer.send('REMOVE_WALLET');
+            localStorage.clear();
+        }
+
+        var accountsCarrousel = document.getElementById("accountsCarrousel");
+
+        copyBtn.addEventListener('click', function () {
+            var text = wallet.mnemonic;
+            var snackbar = document.getElementById("snackbar");
+            navigator.clipboard.writeText(text).then(function () {
+                snackbar.classList.add("bg-green-500");
+                snackbar.innerHTML = 'Seed copied to clipboard';
+                snackbar.classList.add("show");
+                setTimeout(function () { snackbar.className = snackbar.className.replace("show", ""); }, 3000);
+            }, function (err) {
+                snackbar.classList.add("bg-red-500");
+                snackbar.innerHTML = "Couldn't copy seed to clipboard";
+                snackbar.classList.add("show");
+                setTimeout(function () { snackbar.className = snackbar.className.replace("show", ""); }, 3000);
+            });
+
+        });
+
+        function generate_mnemonic(bits = 128) {
+            const mnemonic = bip39.generateMnemonic(bits)
+            return mnemonic
+        }
+
+        function generate_mnemonic24() {
+            return generate_mnemonic(256)
+        }
+
+        function loadTransactionsFromLocalStorage() {
+            publicKeys = plainToClass(String, JSON.parse(localStorage.getItem('publicKeys')));
+            let accountsToSet = plainToClass(Account, JSON.parse(localStorage.getItem('accounts')));
+            if (accountsToSet !== null) {
+                accounts = accountsToSet;
+            }
+            let secondsToSet = localStorage.getItem('seconds');
+            if (secondsToSet !== null) {
+                seconds = secondsToSet;
+            }
+            secondsInput.value = seconds;
+            if (accounts !== null) {
+                for (let i = 0; i < accounts.length; i++) {
+                    const eachAccount = accounts[i];
+                    combineAccounts();
+                    displayAccountName(i + 1, eachAccount);
+                    changeDisplayedAccount(splide.index);
+                }
+                if (!isLoaded) {
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('innerMainWindow').classList.remove('hidden');
+                    isLoaded = true;
+                }
+                splide.refresh();
+                splide2.refresh();
+            }
+        }
+
+        function createNewAccount() {
+            publicKeys.splice(wallet.publicKeyCount, 0, wallet.increasePublicKeyCount());
+            saveWallet();
+            updateAccount(publicKeys[wallet.publicKeyCount - 1]).then(() => {
+                splide.go(`${wallet.publicKeyCount}`);
+            });
+
+        }
+
+        function importExternalPrivateKet() {
+            if (privateSeedToImport != '') {
+                let newPublicKey = wallet.addExternalKey(privateSeedToImport)
+                if (newPublicKey != false) {
+                    publicKeys.push(newPublicKey);
+                    saveWallet();
+                    updateAccount(publicKeys[publicKeys.length - 1], true).then(() => {
+                        changeWindow(0);
+                        splide.go(`${publicKeys.length}`);
+                    });
+                } else {
+                    snackbar.classList.add("bg-red-500");
+                    snackbar.innerHTML = 'Account already imported';
+                    snackbar.classList.add("show");
+                    setTimeout(function () { snackbar.className = snackbar.className.replace("show", ""); }, 3000);
+                }
+            }
+        }
+
+        function saveWallet() {
+            ipcRenderer.send('SAVE_WALLET', wallet);
+        }
+
+        function loadWallet() {
+            publicKeys = wallet.getAllPublicKeys();
+        }
+
+        async function updateAccounts() {
+            console.log('updating')
+            for (const eachPublicKey of publicKeys) {
+                await updateAccount(eachPublicKey);
+            }
+            localStorage.setItem('publicKeys', JSON.stringify(publicKeys));
+            localStorage.setItem('accounts', JSON.stringify(accounts));
+        }
+
+        document.getElementById("addAccountButton").addEventListener('click', (element, event) => {
+            createNewAccount();
+        })
+
+        async function updateAccount(publicKey, isExternal = false) {
+            try {
+                let account = await getAccountOf(publicKey);
+                function checkAccount(eachAccount) {
+                    return eachAccount.publicIdentifier == account.publicIdentifier;
+                }
+                function checkPublicID(eachID) {
+                    return eachID == account.publicIdentifier;
+                }
+                let accountIndex = accounts.findIndex(checkAccount);
+                let publicIdentifierIndex = publicKeys.findIndex(checkPublicID)
+                if (accountIndex == -1) {
+                    if (isExternal) {
+                        account.setName(`Imported Account ${publicIdentifierIndex - wallet.publicKeyCount + 1}`);
+                        accounts.push(account);
+                        accountIndex = accounts.length - 1;
+                    } else {
+                        account.setName(`Account ${publicIdentifierIndex + 1}`);
+                        accounts.splice(wallet.publicKeyCount - 1, 0, account);
+                        accountIndex = publicIdentifierIndex;
+                    }
+
+                } else {
+                    account.setName(accounts[accountIndex].name);
+                    if (accounts[accountIndex].transactions.length != account.transactions.length) {
+                        let newTransactions = [];
+                        newTransactions = account.transactions.slice(0, account.transactions.length - accounts[accountIndex].transactions.length);
+                        if (newTransactions.length == 1) {
+                            if (newTransactions[0].isSend == false) {
+                                notificationText = `You recived ${newTransactions[0].amount}.`;
+                                let notification = new Notification('New transaction', {
+                                    body: notificationText
+                                });
+                                notification.onclick = () => {
+                                    splide.go(`${accountIndex + 1}`);
+                                }
+                            }
+                        } else {
+                            let totalReceived = 0;
+                            for (const eachTransaction of newTransactions) {
+                                if (eachTransaction.isSend) {
+                                    totalReceived -= +eachTransaction.amount.split('∩').join('');
+                                } else {
+                                    totalReceived += +eachTransaction.amount.split('∩').join('');
+                                }
+                            }
+                            if (totalReceived > 0) {
+                                totalReceived = Math.floor(totalReceived * 1000000) / 1000000
+                                notificationText = `You recived ∩${totalReceived}.`;
+                                let notification = new Notification('New transaction', {
+                                    body: notificationText
+                                });
+                                notification.onclick = () => {
+                                    splide.go(`${0}`);
+                                }
+                            }
+
+                        }
+                    }
+                    accounts[accountIndex] = account;
+                }
+                combineAccounts();
+                displayAccountName(accountIndex + 1, account);
+                changeDisplayedAccount(splide.index);
+                changeActiveKeypair(splide2.index)
+            } catch (error) {
+                return;
+            }
+        }
+
+        function combineAccounts() {
+            allTransactions = [];
+            balance = 0;
+            for (const eachAccount of accounts) {
+                allTransactions = allTransactions.concat(eachAccount.transactions);
+                balance += eachAccount.balance;
+
+            }
+            balance = Math.floor(balance * 1000000) / 1000000
+            allTransactions = allTransactions.sort(function (a, b) {
+                var valueA, valueB;
+                valueA = a.block;
+                valueB = b.block;
+                if (valueA < valueB) {
+                    return -1;
+                }
+                else if (valueA > valueB) {
+                    return 1;
+                }
+                return 0;
+            });
+            displayAccountName(0);
+        }
+
+        function displayAccountName(accountIndex, account = null) {
+            if (account == null) {
+                setDisplayName(0, 'All my accounts')
+            } else {
+                setDisplayName(accountIndex, account.name);
+            }
+        }
+
+        function setDisplayName(index, name) {
+            if (index == 0) {
+                if (document.getElementById(`name-${index}`) == undefined) {
+                    splide.add(`<div class="splide__slide"> <div id = "name-${index}" class="flex justify-center font-semibold text-black">` + (`All my accounts`) + '</div> </div>', index);
+                }
+
+            } else {
+                let oldLi = document.getElementById(`name-${accounts[index - 1].name}`);
+                if (oldLi != undefined) {
+                    return;
+                }
+                splide.add(`<div class="splide__slide" > <div id = "name-${accounts[index - 1].name}" class="flex justify-center font-semibold text-black">` + (accounts[index - 1].name) + '</div> </div>', index);
+                splide2.add(`<div class="splide__slide" > <div id = "name-${accounts[index - 1].name}" class="flex justify-center font-semibold text-black">` + (accounts[index - 1].name) + '</div> </div>', index);
+            }
+        }
+
+        function setDisplayBalance(balance) {
+            balanceP = document.getElementById('Balance');
+            if (balance < 1000) {
+                balanceP.innerHTML = `<div class="text-6xl">${balance}</div>`;
+            } else if (balance < 100000) {
+                balanceP.innerHTML = `<div class="text-5xl">${balance}</div>`;
+            } else {
+                balanceP.innerHTML = `<div class="text-4xl">${balance}</div>`;
+            }
+        }
+
+        function setTransactionsTable(transactions) {
+            let tbody = document.getElementById('transactionsTable');
+            tbody.innerHTML = '';
+            let imagefield = document.getElementById('transactionsField');
+            imagefield.innerHTML = '';
+            if (transactions.length > 0) {
+                transactions = transactions.sort(function (a, b) {
+                    var valueA, valueB;
+                    valueA = a.block;
+                    valueB = b.block;
+                    if (valueA < valueB) {
+                        return -1;
+                    }
+                    else if (valueA > valueB) {
+                        return 1;
+                    }
+                    return 0;
+                });
+                let plus = '<svg class="fill-current w-5 h-5 mr-5 text-green-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z"/></svg>';
+                let less = '<svg class="fill-current w-5 h-5 mr-5 text-red-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 10h24v4h-24z"/></svg>';
+                for (let index = 0; index < transactions.length; index++) {
+                    const transaction = transactions[index];
+                    let newRow = tbody.insertRow(0);
+                    newRow.className = "rounded-lg hover:bg-baseLigth hover:shadow-xl";
+
+                    let newCell = newRow.insertCell(0);
+                    newCell.className = "px-4 py-4";
+                    let newDiv = document.createElement('div');
+                    newDiv.className = "flex items-center ";
+                    newDiv.innerHTML += transaction.isSend ? less : plus;
+                    let newText = document.createTextNode(transaction.recipientIdentifier);
+                    newDiv.appendChild(newText);
+                    newCell.appendChild(newDiv);
+
+                    newCell = newRow.insertCell(1);
+                    newCell.className = "px-4 py-4";
+                    newText = document.createTextNode(transaction.block);
+                    newCell.appendChild(newText);
+
+                    newCell = newRow.insertCell(2);
+                    newCell.className = "px-4 py-4 last-child ";
+                    newText = document.createTextNode(transaction.amount);
+                    newCell.appendChild(newText);
+                }
+            } else {
+                let newDiv = document.createElement('div');
+                newDiv.className = "flex flex-col w-full h-full items-center justify-center";
+                newDiv.innerHTML = '<img class ="my-5" width = "120" heigth = "120" src="images/noTransactions.png">'
+                newDiv.innerHTML += "You don't have any transactions."
+                imagefield.appendChild(newDiv);
+            }
+
+        }
+
+        function changeDisplayedAccount(destIndex) {
+            if (destIndex == 0) {
+                setDisplayBalance(balance);
+                setTransactionsTable(allTransactions);
+            } else {
+                setDisplayBalance(accounts[destIndex - 1].balance);
+                setTransactionsTable(accounts[destIndex - 1].transactions)
+            }
+        }
+
+        async function getAccountOf(address) {
+            let account = new Account();
+            account.setPublicIdentifier(address);
+            try {
+                let response = await fetch("https://nyzo.co/walletRefresh?id=" + address);
+                let bodyAsJson = await response.json();
+                account.setTransactions(getTransactionsFromParsedBody(bodyAsJson));
+                account.setBalance(getBalanceFromParsedBody(bodyAsJson));
+                if (!document.getElementById("errorIcon").classList.contains('invisible')) {
+                    document.getElementById("errorIcon").classList.add('invisible');
+                }
+                return account;
+            } catch (error) {
+                document.getElementById("errorIcon").classList.remove('invisible');
+            }
+
+        }
+
+        function getBalanceFromParsedBody(bodyAsJson) {
+            return bodyAsJson['balanceMicronyzos'] / 1000000;
+        }
+
+        function getTransactionsFromParsedBody(bodyAsJson) {
+            let transactions = [];
+            let el = document.createElement('div');
+            el.innerHTML = bodyAsJson['creditsAndDebits'];
+            let transactionElementList = el.getElementsByTagName('tr');
+            for (let element of transactionElementList) {
+                if (element['cells'][0]['firstChild']['data'] != 'type') {
+                    let transaction = new DisplayableTransaction();
+                    transaction.setAmount(element['cells'][2]['children'][0]['firstChild']['data'].split('(').join('').split(')').join(''));
+                    transaction.setIsSend(element['firstChild']['childNodes'][0]['data'] == 'payment to ');
+                    transaction.setRecipientIdentifier(element['cells'][0]['children'][0]['firstChild']['data']);
+                    transaction.setBlock(element['cells'][1]['children'][0]['firstChild']['data']);
+                    transactions.push(transaction);
+                }
+            }
+            return transactions;
+        }
+
+        function changeWindow(index) {
+            if (index == activeWindow) {
+                return;
+            }
+
+            document.getElementById(`${activeWindow}`).classList.add('hidden');
+            document.getElementById(`${index}`).classList.remove('hidden');
+            if (index == 1) {
+                splide2.refresh();
+                changeActiveKeypair(splide2.index);
+                updateAmountToSendFromMicronyzos();
+            }
+            if (index == 0) {
+                splide.refresh();
+            }
+            activeWindow = index;
+
+        }
+
+        function InitializeWallet() {
+            loadTransactionsFromLocalStorage();
+            ipcRenderer.send('GET_WALLET_FROM_CACHE');
+            intervalID = setInterval(function () { updateAccounts(); }, seconds * 1000);
+        }
+
+        function showSendError(error) {
+            sendError.innerHTML = error;
+            sendErrorDiv.classList.remove("hidden");
+            setTimeout(function () { sendErrorDiv.classList.add("hidden"); }, 3000);
+        }
+
+        function showHoverInfo(info, isSuccesful) {
+            hoverText.innerHTML = info;
+            hover.classList.remove("hidden");
+            if (isSuccesful) {
+                animation.innerHTML = '<h1 class="ml5"> <span class="text-wrapper hidden "> <span class="line bg-green-500"></span> <span class="letters letters-left">Succesful</span> <span class="letters ampersand"><svg xmlns="http://www.w3.org/2000/svg" class="fill-current w-5 h-5 mb-1 text-green-500" viewBox="0 0 24 24"> <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-1.25 17.292l-4.5-4.364 1.857-1.858 2.643 2.506 5.643-5.784 1.857 1.857-7.5 7.643z" /> </svg></span> <span class="letters letters-right">Transaction</span> <span class="line line2 bg-green-500"></span> </span> </h1>';
+            } else {
+                animation.innerHTML = '<h1 class="ml5"> <span class="text-wrapper hidden "> <span class="line bg-red-500"></span> <span class="letters letters-left">Transaction</span> <span class="letters ampersand bg-red-500 rounded-full w-5 h-5 flex items-center justify-center"> <svg xmlns="http://www.w3.org/2000/svg" class="fill-current w-5 h-5 mb-1 text-white" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /> </svg> </span> <span class="letters letters-right">Failed</span> <span class="line line2 bg-red-500"></span> </span> </h1>';
+            }
+            anime.timeline({ loop: false })
+                .add({
+                    targets: '.ml5 .line',
+                    opacity: [0.5, 1],
+                    scaleX: [0, 1],
+                    easing: "easeInOutExpo",
+                    duration: 700
+                }).add({
+                    targets: '.ml5 .line',
+                    duration: 600,
+                    easing: "easeOutExpo",
+                    translateY: (el, i) => (-0.625 + 0.625 * 2 * i) + "em"
+                }).add({
+                    targets: '.ml5 .ampersand',
+                    opacity: [0, 1],
+                    scaleY: [0.5, 1],
+                    easing: "easeOutExpo",
+                    duration: 600,
+                }, '-=600').add({
+                    targets: '.ml5 .letters-left',
+                    opacity: [0, 1],
+                    translateX: ["0.5em", 0],
+                    easing: "easeOutExpo",
+                    duration: 600,
+                }, '-=300').add({
+                    targets: '.ml5 .letters-right',
+                    opacity: [0, 1],
+                    translateX: ["-0.5em", 0],
+                    easing: "easeOutExpo",
+                    duration: 600,
+                }, '-=600');
+        }
+
+        function showDeleteHover() {
+            hover3.classList.remove('hidden');
+        }
+
+        function closeHover3() {
+            hover3.classList.add("hidden");
+        }
+
+
+        function showKeys() {
+            hover2.classList.remove('hidden')
+            const mnemonicArray = wallet.mnemonic.split(' ');
+            mnemonicField.innerHTML = '';
+            mnemonicArray.forEach(word => {
+                mnemonicField.innerHTML += `<div class="bg-baseLigth rounded-full px-2 mx-1 shadow-sm">${word}</div>`;
+            });
+            keysField.innerHTML = '';
+            for (let i = 0; i < publicKeys.length; i++) {
+                const eachPublicKey = publicKeys[i];
+                let keypair = new NyzoKey(wallet.getPrivateKeyOf(eachPublicKey));
+                if (i == 0) {
+                    keysField.innerHTML += '<div class="ml-2 mt-2"> Derived keypairs </div>';
+                }
+                if (publicKeys.length > wallet.publicKeyCount) {
+                    if (i == wallet.publicKeyCount) {
+                        keysField.innerHTML += '<div class="ml-2 mt-2"> Imported keypairs </div>';
+                    }
+                }
+                keysField.innerHTML += `<div onclick="copyKey('${keypair.toNyzoPrivateSeed()}');" class="flex items-center w-full mx-2 my-1 py-2 bg-baseLigth rounded-lg px-2 text-sm"> ${keypair.toNyzoPublicIdentifier()} </div>`;
+            }
+
+
+        }
+
+        function copyKey(key) {
+            var text = key;
+            var snackbar = document.getElementById("snackbar");
+            navigator.clipboard.writeText(text).then(function () {
+                snackbar.classList.add("bg-green-500");
+                snackbar.innerHTML = 'Private Key copied to clipboard';
+                snackbar.classList.add("show");
+                setTimeout(function () { snackbar.className = snackbar.className.replace("show", ""); }, 3000);
+            }, function (err) {
+                snackbar.classList.add("bg-red-500");
+                snackbar.innerHTML = "Couldn't copy seed to clipboard";
+                snackbar.classList.add("show");
+                setTimeout(function () { snackbar.className = snackbar.className.replace("show", ""); }, 3000);
+            });
+        }
+
+        function closeHover() {
+            hover.classList.add("hidden");
+        }
+
+        function closeHover2() {
+            hover2.classList.add("hidden");
+        }
+
+        function putMaxAmount() {
+            document.getElementById('amountToSendInput').value = accounts[splide2.index].balance;
+        }
+
+        function minimize() {
+            ipcRenderer.send('MINIMIZE_MAIN_WINDOW');
+        }
+        function closeWindow() {
+            ipcRenderer.send('CLOSE_MAIN_WINDOW');
+        }
+
     </script>
     <!-- The functions to communicate with Python-->
 </body>

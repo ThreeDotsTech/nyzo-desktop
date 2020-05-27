@@ -1,20 +1,105 @@
+<script src="js/jsaes.js"></script>
+<script src="./../js/wallet.js"></script>
 <script>
-    const { PythonShell } = require('python-shell');
+    var reflectMetadata = require('reflect-metadata');
+    var classTransformer = require('class-transformer');
+    const { serialize } = classTransformer;
     const { ipcRenderer } = require('electron');
     const path = require('path');
+    const jetpack = require('fs-jetpack');
+    var walletPath;
 
-    ipcRenderer.on('START_PROCESSING', (event, args) => {
-        const { data } = args;
-        let pyshell = new PythonShell(path.join(__dirname, '/../scripts/factorial.py'), {
-            pythonPath: 'python3',
-            args: [data]
-        });
-
-        pyshell.on('message', function (results) {
-            console.log(results)
-            ipcRenderer.send('MESSAGE_FROM_BACKGROUND', { message: results });
-        });
+    ipcRenderer.on('CHECK_WALLET', (event, args) => {
+        walletPath = path.join(args['path'], 'nyzo-desktop', 'wallet.nyzowallet');
+        ipcRenderer.send('MESSAGE_FROM_RENDERER', { message: `Checking if wallet exists at "${walletPath}"...` });
+        const response = jetpack.exists(walletPath);
+        ipcRenderer.send('WALLET_STATUS', { status: response });
     });
+
+    ipcRenderer.on('REMOVE_WALLET', (event, args) => {
+        ipcRenderer.send('MESSAGE_FROM_RENDERER', { message: `DELETING WALLET AT "${walletPath}"...`, level: 'warn' });
+        jetpack.remove(walletPath);
+        ipcRenderer.send('WALLET_REMOVED');
+    });
+
+    ipcRenderer.on('UNLOCK_WALLET', (event, args) => {
+        ipcRenderer.send('MESSAGE_FROM_RENDERER', { message: `Attemptting to unlock wallet...` });
+        let wallet = readWalletFromDisk(args['password']);
+        if (wallet != 1) {
+            ipcRenderer.send('DISPLAY_WALLET', { wallet: wallet, password: args['password'] });
+        } else {
+            ipcRenderer.send('WRONG_PASSWORD');
+        }
+    });
+
+    ipcRenderer.on('SAVE_WALLET', (event, args) => {
+        ipcRenderer.send('MESSAGE_FROM_RENDERER', { message: `Saving wallet...` });
+        try {
+            readWalletFromDisk(args['password']);
+        } catch (error) {
+            ipcRenderer.send('MESSAGE_FROM_RENDERER', { message: error, level: 'warn' });
+            return;
+        }
+        encryptAndSaveWallet(args['wallet'], args['password']);
+    });
+
+
+    ipcRenderer.on('CREATE_ENCRYPTED_WALLET', (event, args) => {
+        try {
+            let wallet = new Wallet();
+            wallet.setMnemonic(args['mnemonic'].trim());
+            encryptAndSaveWallet(wallet, args['password']);
+            ipcRenderer.send('MESSAGE_FROM_RENDERER', { message: 'Wallet successfully created' });
+            ipcRenderer.send('DISPLAY_WALLET', { wallet: wallet, password: args['password'] });
+        } catch (error) {
+            ipcRenderer.send('MESSAGE_FROM_RENDERER', { message: `There was an error while trying to create wallet: ${error}`, level: 'error' });
+        }
+    });
+
+    function encryptAndSaveWallet(wallet, password) {
+        var encrypted = CryptoJS.AES.encrypt(serialize(wallet), password);
+        saveWalletToDisk(encrypted);
+    }
+
+    function readWalletFromDisk(password) {
+        const { plainToClass } = classTransformer;
+        ipcRenderer.send('MESSAGE_FROM_RENDERER', { message: 'Reading wallet from disk...' });
+        let encryptedWallet;
+        let decryptedWallet;
+        let wallet;
+        try {
+            encryptedWallet = jetpack.read(walletPath);
+            ipcRenderer.send('MESSAGE_FROM_RENDERER', { message: 'Wallet read.' });
+        } catch (error) {
+            ipcRenderer.send('MESSAGE_FROM_RENDERER', { message: `Something went wrong while reading the wallet to disk: ${error}.`, level: 'error' });
+            return;
+        }
+        ipcRenderer.send('MESSAGE_FROM_RENDERER', { message: 'Decrypting wallet using password...' });
+        try {
+            decryptedWallet = CryptoJS.AES.decrypt(encryptedWallet, password).toString(CryptoJS.enc.Utf8);
+            ipcRenderer.send('MESSAGE_FROM_RENDERER', { message: 'Wallet successfully decrypted.' });
+        } catch (error) {
+            ipcRenderer.send('MESSAGE_FROM_RENDERER', { message: `Something went wrong while trying to decrypt:${error}`, level: 'error' });
+        }
+        try {
+            wallet = plainToClass(Wallet, JSON.parse(decryptedWallet));
+        } catch (error) {
+            ipcRenderer.send('MESSAGE_FROM_RENDERER', { message: 'Wrong password', level: 'warn' });
+            return 1;
+        }
+        return wallet;
+    }
+
+    function saveWalletToDisk(encryptedWallet) {
+        ipcRenderer.send('MESSAGE_FROM_RENDERER', { message: 'Saving wallet to disk...' });
+        try {
+            jetpack.write(walletPath, encryptedWallet.toString(), { atomic: true });
+            ipcRenderer.send('MESSAGE_FROM_RENDERER', { message: 'Wallet saved.' });
+        } catch (error) {
+            ipcRenderer.send('MESSAGE_FROM_RENDERER', { message: `Something went wrong while saving the wallet to disk ${error}.`, level: 'error' });
+        }
+
+    }
 
     ipcRenderer.send('BACKGROUND_READY');
 </script>

@@ -1,5 +1,250 @@
 @tailwind base;
+.titlebar {
+    -webkit-user-select: none;
+    -webkit-app-region: drag;
+}
+.disabledBtn {
+  @apply text-baseLigth;
+  @apply bg-secondaryLigth;
+  @apply border-2;
+  @apply border-secondaryLigth;
+  @apply shadow-xl;
+  @apply font-bold;
+  @apply text-center;
+  @apply rounded-lg;
+  @apply opacity-50;
+  @apply cursor-not-allowed;
+}
 
+.btn {
+  @apply text-baseLigth;
+  @apply bg-secondaryLigth;
+  @apply border-2;
+  @apply border-secondaryLigth;
+  @apply shadow-xl;
+  @apply font-bold;
+  @apply text-center;
+  @apply rounded-lg;
+  @apply cursor-pointer
+}
+.btn:hover{
+  @apply border-gray-800;
+  @apply bg-gray-800;
+}
+
+.btn-no-border {
+  @apply text-baseLigth;
+  @apply bg-secondaryLigth;
+  @apply border-2;
+  @apply border-secondaryLigth;
+  @apply shadow-xl;
+  @apply font-bold;
+  @apply text-center;
+  @apply cursor-pointer
+}
+.btn-no-border:hover{
+  @apply border-gray-800;
+  @apply bg-gray-800;
+}
+
+.warning-btn {
+  @apply text-baseLigth;
+  @apply bg-red-500;
+  @apply border-2;
+  @apply border-red-500;
+  @apply shadow-xl;
+  @apply font-bold;
+  @apply text-center;
+  @apply rounded-lg;
+  @apply cursor-pointer
+}
+.warning-btn:hover{
+  @apply border-red-700;
+  @apply bg-red-700;
+}
+
+.input{
+  @apply block;
+  @apply rounded-lg;
+  @apply w-full;
+  @apply bg-white;
+  @apply border-2;
+  @apply border-gray-300;
+  @apply shadow-md;
+}
+.input::placeholder{
+  @apply text-gray-500;
+}
+.input:focus{
+   @apply bg-white;
+   @apply border-secondaryLigth;
+   @apply outline-none;
+}
+
+thead tr th:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px;}
+thead tr th:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px;}
+
+tbody tr td:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px;}
+tbody tr td:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px;}
+
+.spinner {
+    width: 70px;
+    text-align: center;
+  }
+  
+  .spinner > div {
+    width: 18px;
+    height: 18px;
+  
+    border-radius: 100%;
+    display: inline-block;
+    -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+    animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+  }
+  
+  .spinner .bounce1 {
+    -webkit-animation-delay: -0.32s;
+    animation-delay: -0.32s;
+  }
+  
+  .spinner .bounce2 {
+    -webkit-animation-delay: -0.16s;
+    animation-delay: -0.16s;
+  }
+  
+  
+  @-webkit-keyframes sk-bouncedelay {
+    0%, 80%, 100% { -webkit-transform: scale(0) }
+    40% { -webkit-transform: scale(1.0) }
+  }
+  
+  @keyframes sk-bouncedelay {
+    0%, 80%, 100% { 
+      -webkit-transform: scale(0);
+      transform: scale(0);
+    } 40% { 
+      -webkit-transform: scale(1.0);
+      transform: scale(1.0);
+    }
+  }
+@keyframes splide-loading{0%{transform:rotate(0)}to{transform:rotate(1turn)}}
+.splide__container{position:relative;box-sizing:border-box}.splide__list{display:flex;flex-wrap:wrap;margin:0!important;padding:0!important}
+.splide__pagination{display:inline-flex;align-items:center;width:95%;flex-wrap:wrap;justify-content:center;margin:0}
+.splide__pagination li{list-style-type:none;display:inline-block;line-height:1;margin:0}.splide{position:relative;visibility:hidden}
+.splide.is-active{visibility:visible}.splide__slide{position:relative;box-sizing:border-box;list-style-type:none!important;margin:0}
+.splide__slide img{vertical-align:bottom}.splide__slider{position:relative}.splide__spinner{position:absolute;top:0;left:0;right:0;bottom:0;margin:auto;display:inline-block;width:20px;height:20px;border-radius:50%;border:4px solid #000;border-left-color:transparent;animation:splide-loading 1s linear infinite}
+.splide__track{position:relative;z-index:0;overflow:hidden}
+.splide--draggable>.splide__track>.splide__list>.splide__slide{-webkit-user-select:none;user-select:none}
+.splide--fade>.splide__track>.splide__list{display:block}
+.splide--fade>.splide__track>.splide__list>.splide__slide{position:absolute;top:0;left:0;z-index:0;opacity:0}
+.splide--fade>.splide__track>.splide__list>.splide__slide.is-active{position:relative;z-index:1;opacity:1}
+.splide--rtl{direction:rtl}
+.splide--ttb>.splide__track>.splide__list{display:block}
+.splide--ttb>.splide__pagination{width:auto}
+.splide__arrow{position:absolute;z-index:1;top:50%;transform:translateY(-50%);width:2em;height:2em;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;}
+.splide__arrow svg{width:1.2em;height:1.2em;
+  @apply fill-current;}
+.splide__arrow:focus{outline:none}
+.splide__arrow--prev{left:1em}
+.splide__arrow--prev svg{transform:scaleX(-1); 
+  @apply fill-current;}
+.splide__arrow--next{right:1em}
+.splide__pagination{position:absolute;z-index:1;bottom:.5em;left:50%;transform:translateX(-50%);padding:0}
+.splide__pagination__page{display:inline-block;width:8px;height:8px;background:#aaa;border-radius:50%;margin:3px;padding:0;transition:transfrom .2s linear;border:none;}
+.splide__pagination__page.is-active{transform:scale(1.4);background: #000000;}
+.splide__pagination__page:hover{cursor:pointer;opacity:.9}
+.splide__pagination__page:focus{outline:none}
+.splide__progress__bar{width:0;height:3px;background: rgb(227, 13, 13)}
+.splide--nav>.splide__track>.splide__list>.splide__slide{border:3px solid transparent}
+.splide--nav>.splide__track>.splide__list>.splide__slide.is-active{border-color:rgb(255, 0, 0)}
+.splide--nav>.splide__track>.splide__list>.splide__slide:focus{outline:none}
+.splide--rtl>.splide__arrows .splide__arrow--prev,.splide--rtl>.splide__track>.splide__arrows .splide__arrow--prev{right:1em;left:auto}
+.splide--rtl>.splide__arrows .splide__arrow--prev svg,.splide--rtl>.splide__track>.splide__arrows .splide__arrow--prev svg{transform:scaleX(1)}
+.splide--rtl>.splide__arrows .splide__arrow--next,.splide--rtl>.splide__track>.splide__arrows .splide__arrow--next{left:1em;right:auto}
+.splide--rtl>.splide__arrows .splide__arrow--next svg,.splide--rtl>.splide__track>.splide__arrows .splide__arrow--next svg{transform:scaleX(-1)}
+.splide--ttb>.splide__arrows .splide__arrow,.splide--ttb>.splide__track>.splide__arrows .splide__arrow{left:50%;transform:translate(-50%)}
+.splide--ttb>.splide__arrows .splide__arrow--prev,.splide--ttb>.splide__track>.splide__arrows .splide__arrow--prev{top:1em}
+.splide--ttb>.splide__arrows .splide__arrow--prev svg,.splide--ttb>.splide__track>.splide__arrows .splide__arrow--prev svg{transform:rotate(-90deg)}
+.splide--ttb>.splide__arrows .splide__arrow--next,.splide--ttb>.splide__track>.splide__arrows .splide__arrow--next{top:auto;bottom:1em}
+.splide--ttb>.splide__arrows .splide__arrow--next svg,.splide--ttb>.splide__track>.splide__arrows .splide__arrow--next svg{transform:rotate(90deg)}
+.splide--ttb>.splide__pagination{display:flex;flex-direction:column;bottom:50%;left:auto;right:.5em;transform:translateY(50%)}
+
+.ml5 {
+    position: relative;
+    font-weight: 300;
+    font-size: 2.5em;
+  }
+  
+  .ml5 .text-wrapper {
+    position: relative;
+    display: inline-block;
+    padding-top: 0.1em;
+    padding-right: 0.05em;
+    padding-bottom: 0.15em;
+    line-height: 1em;
+  }
+  
+  .ml5 .line {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    height: 3px;
+    width: 100%;
+    transform-origin: 0.5 0;
+  }
+  
+  .ml5 .ampersand {
+    margin-right: -0.1em;
+    margin-left: -0.1em;
+  }
+  
+  .ml5 .letters {
+    display: inline-block;
+    opacity: 0;
+  }
+
+  /* The snackbar - position it at the bottom and in the middle of the screen */
+#snackbar {
+  visibility: hidden; /* Hidden by default. Visible on click */
+  min-width: 250px; /* Set a default minimum width */
+  margin-left: -125px; /* Divide value of min-width by 2 */
+  text-align: center; /* Centered text */
+  border-radius: 2px; /* Rounded borders */
+  padding: 16px; /* Padding */
+  position: fixed; /* Sit on top of the screen */
+  z-index: 1; /* Add a z-index if needed */
+  left: 50%; /* Center the snackbar */
+  bottom: 1px; /* 30px from the bottom */
+}
+
+#snackbar.show {
+  visibility: visible; 
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+/* Animations to fade the snackbar in and out */
+@-webkit-keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 1px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 1px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+  from {bottom: 1px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {bottom: 1px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}
 @tailwind components;
 
 @tailwind utilities;

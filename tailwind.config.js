@@ -1,5 +1,8 @@
 module.exports = {
-  purge: [],
+  purge: [
+    './unlock.html',
+    './index.html'
+  ],
   theme: {
     extend: {
       colors: {
@@ -12,7 +15,6 @@ module.exports = {
         baseDark: '#15151a',
         secondaryDark: '#F5F5F5',
         depthDark: '#1b1c20',
-
         nyzo: '#500000',
       }
     },

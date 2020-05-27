@@ -1,30 +1,35 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, Tray } = require('electron')
+if (require('electron-squirrel-startup')) return app.quit();
 const path = require('path');
 const url = require('url');
-
+const log = require('electron-log');
 app.allowRendererProcessReuse = false;
 
 // a window object outside the function scope prevents
 // the object from being garbage collected
 let mainWindow;
+let unlockWindow;
+let icon;
+
+
+
 
 function createWindow() {
-    // Create the browser window.
-    mainWindow = new BrowserWindow({
+    icon = new Tray(path.join(__dirname, 'icon/AppIcon.png'));
+    unlockWindow = new BrowserWindow({
         frame: false,
-        width: 800,
-        height: 600,
+        width: 400,
+        height: 500,
+        resizable: false,
+        icon: icon,
         webPreferences: {
             nodeIntegration: true
         }
     })
-
-    // and load the index.html of the app.
-    mainWindow.loadFile('index.html')
-
-    //mainWindow.webContents.openDevTools();
-
+    unlockWindow.loadFile('unlock.html');
+    unlockWindow.webContents.openDevTools()
 }
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -54,9 +59,10 @@ app.on('activate', () => {
 
 // temporary variable to store data while background
 // process is ready to start processing
-let cache = {
-    data: undefined,
-};
+var cache = {
+    password: '',
+    wallet: undefined
+}
 
 // a window object outside the function scope prevents
 // the object from being garbage collected
@@ -65,7 +71,7 @@ let hiddenWindow;
 // This event listener will listen for request
 // from visible renderer process
 ipcMain.on('START_BACKGROUND_VIA_MAIN', (event, args) => {
-    console.log('Starting background proccess..')
+    log.info('Starting background proccess..');
     const backgroundFileUrl = url.format({
         pathname: path.join(__dirname, `background_tasks/background.html`),
         protocol: 'file:',
@@ -73,32 +79,134 @@ ipcMain.on('START_BACKGROUND_VIA_MAIN', (event, args) => {
     });
     hiddenWindow = new BrowserWindow({
         show: false,
+        icon: icon,
         webPreferences: {
             nodeIntegration: true,
         },
     });
     hiddenWindow.loadURL(backgroundFileUrl);
-
-    hiddenWindow.webContents.openDevTools();
-
+    //hiddenWindow.webContents.openDevTools();
     hiddenWindow.on('closed', () => {
         hiddenWindow = null;
     });
-
-    cache.data = args.number;
 });
 
-// This event listener will listen for data being sent back
-// from the background renderer process
-ipcMain.on('MESSAGE_FROM_BACKGROUND', (event, args) => {
-    console.log('New message from the background proccess:')
-    mainWindow.webContents.send('MESSAGE_FROM_BACKGROUND_VIA_MAIN', args.message);
+ipcMain.on('GET_WALLET_FROM_CACHE', (event, args) => {
+    event.reply('WALLET_FROM_CACHE', cache['wallet']);
 });
+
 
 ipcMain.on('BACKGROUND_READY', (event, args) => {
-    console.log('- Background proccess running..')
-    event.reply('START_PROCESSING', {
-        data: cache.data,
+    log.info('Background proccess running.');
+    event.reply('CHECK_WALLET', {
+        path: app.getPath('appData')
     });
 });
 
+ipcMain.on('MESSAGE_FROM_RENDERER', (event, args) => {
+    switch (args['level']) {
+        case undefined:
+            log.info(args['message']);
+            break;
+        case 'error':
+            log.error(args['message']);
+            break;
+        default:
+            log.warn(args['message']);
+            break;
+    }
+
+
+});
+
+ipcMain.on('REMOVE_WALLET', (event, args) => {
+    hiddenWindow.webContents.send('REMOVE_WALLET', args);
+});
+
+ipcMain.on('WALLET_REMOVED', (event, args) => {
+    mainWindow.close();
+    unlockWindow = new BrowserWindow({
+        frame: false,
+        width: 400,
+        height: 500,
+        resizable: false,
+        icon: icon,
+        webPreferences: {
+            nodeIntegration: true
+        }
+    });
+    unlockWindow.loadFile('unlock.html');
+
+});
+
+ipcMain.on('DISPLAY_WALLET', (event, args) => {
+    cache['wallet'] = args['wallet'];
+    cache['password'] = args['password'];
+    log.info('Openning wallet window');
+    unlockWindow.close();
+    mainWindow = new BrowserWindow({
+        frame: false,
+        width: 800,
+        height: 600,
+        resizable: false,
+        icon: icon,
+        webPreferences: {
+            nodeIntegration: true
+        }
+    });
+    mainWindow.on('close', (event) => {
+        hiddenWindow.close();
+    });
+    mainWindow.loadFile('index.html');
+
+    //mainWindow.webContents.openDevTools();
+});
+
+ipcMain.on('UNLOCK_WALLET', (event, args) => {
+    hiddenWindow.webContents.send('UNLOCK_WALLET', args);
+});
+
+ipcMain.on('CLOSE_UNLOCK_WINDOW', (event, args) => {
+    unlockWindow.close();
+    hiddenWindow.close();
+});
+
+ipcMain.on('CLOSE_MAIN_WINDOW', (event, args) => {
+    mainWindow.close();
+});
+
+ipcMain.on('MINIMIZE_MAIN_WINDOW', (event, args) => {
+    mainWindow.minimize();
+});
+
+ipcMain.on('MINIMIZE_UNLOCK_WINDOW', (event, args) => {
+    unlockWindow.minimize();
+});
+
+ipcMain.on('SAVE_WALLET', (event, wallet) => {
+    cache['wallet'] = wallet;
+    hiddenWindow.webContents.send('SAVE_WALLET', cache);
+});
+
+ipcMain.on('WRONG_PASSWORD', (event, args) => {
+    unlockWindow.webContents.send('WRONG_PASSWORD');
+});
+
+ipcMain.on('CREATE_NEW_WALLET', (event, args) => {
+    log.info('Creating new wallet...');
+    args['path'] = app.getPath('appData');
+    hiddenWindow.webContents.send('CREATE_ENCRYPTED_WALLET', args);
+});
+
+ipcMain.on('WALLET_STATUS', (event, args) => {
+    switch (args['status']) {
+        case 'file':
+            unlockWindow.webContents.send('WALLET_EXIST');
+            log.info('Wallet found.');
+            break;
+        default:
+            unlockWindow.webContents.send('WALLET_DOESNT_EXIST');
+            log.warn('Wallet not found.');
+            break;
+    }
+});

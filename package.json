@@ -36,6 +36,10 @@
             "icon": "icon/AppIcon.icns",
             "background": "images/dmgBackground.png"
           }
+        },
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {}
         }
       ]
     }

@@ -30,13 +30,12 @@ All the transactions are signed locally.
 
 Get a notification when you receive Nyzo.
 
+## Compile
 
-## Requirements: 
-
+#### Requirements: 
 ```
 NodeJS
 ```
-## Compile
 To build the application for your OS run:
 ```
 npm install

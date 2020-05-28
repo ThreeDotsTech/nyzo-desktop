@@ -1,0 +1,78 @@
+{
+  "name": "nyzo-wallet",
+  "productName": "Nyzo Wallet",
+  "version": "0.1.0",
+  "description": "The desktop wallet for the Nyzo cryptocurrency",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
+  },
+  "keywords": [],
+  "author": {
+    "name": "Marco Solis",
+    "email": "this.solis@ieee.org"
+  },
+  "license": "GPL-3.0",
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "icon": "icon/AppIcon",
+        "executableName": "nyzo-wallet"
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {
+            "icon": "icon/AppIcon.png"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-dmg",
+          "config": {
+            "icon": "icon/AppIcon.icns",
+            "background": "images/dmgBackground.png"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "icon": "icon/AppIcon.ico",
+            "setupIcon": "icon/AppIcon.ico",
+            "exe": "nyzo-wallet.exe",
+            "loadingGif": "images/installing.gif"
+          }
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "bip39": "^3.0.2",
+    "class-transformer": "^0.2.3",
+    "concurrently": "^5.2.0",
+    "create-hash": "^1.2.0",
+    "create-hmac": "^1.1.7",
+    "electron-log": "^4.2.0",
+    "electron-squirrel-startup": "^1.0.0",
+    "fs-jetpack": "^2.4.0",
+    "node-int64": "^0.4.0",
+    "nyzospace": "file:./js/nyzospace",
+    "nyzostrings": "0.0.9",
+    "reflect-metadata": "^0.1.13",
+    "tweetnacl": "^1.0.3",
+    "wait-on": "^5.0.0"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.51",
+    "@electron-forge/maker-deb": "^6.0.0-beta.51",
+    "@electron-forge/maker-dmg": "^6.0.0-beta.51",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.51",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.51",
+    "@electron-forge/maker-zip": "^6.0.0-beta.51",
+    "electron": "9.0.0",
+    "tailwindcss": "^1.4.6"
+  }
+}

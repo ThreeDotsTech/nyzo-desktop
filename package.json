@@ -39,7 +39,11 @@
         },
         {
           "name": "@electron-forge/maker-squirrel",
-          "config": {}
+          "config": {
+            "icon": "icon/AppIcon.ico",
+            "setupIcon": "icon/AppIcon.ico",
+            "exe": "nyzo-wallet.exe"
+          }
         }
       ]
     }
@@ -51,6 +55,7 @@
     "create-hash": "^1.2.0",
     "create-hmac": "^1.1.7",
     "electron-log": "^4.2.0",
+    "electron-squirrel-startup": "^1.0.0",
     "fs-jetpack": "^2.4.0",
     "node-int64": "^0.4.0",
     "nyzospace": "file:./js/nyzospace",

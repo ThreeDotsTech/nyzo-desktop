@@ -1,4 +1,5 @@
-const { app, BrowserWindow, ipcMain, Tray } = require('electron')
+const { app, BrowserWindow, ipcMain, Tray } = require('electron');
+if (require('electron-squirrel-startup')) return app.quit();
 const path = require('path');
 const url = require('url');
 const log = require('electron-log');
@@ -9,9 +10,6 @@ app.allowRendererProcessReuse = false;
 let mainWindow;
 let unlockWindow;
 let icon;
-
-
-
 
 function createWindow() {
     icon = new Tray(path.join(__dirname, 'icon/AppIcon.png'));

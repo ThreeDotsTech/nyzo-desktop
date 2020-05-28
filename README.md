@@ -1,3 +1,4 @@
+
 #  Nyzo Desktop Wallet
 
 Nyzo Desktop Wallet is a  **cross platform** light wallet for the **Nyzo** Cryptocurrency. It works on **Windows**, **MacOS** and **Linux**.
@@ -41,8 +42,11 @@ To build the application for your OS run:
 npm install
 npm run make
 ```
+
 ## Contribute
 If you find this piece of software helpful, consider buying us a cup of coffe.
+
   `NYZO: id__80qi1DrCJZfcPPVeC83CgCX36SDN.StRhKYSeB-rrqr7z-_LShR7` 
+  
   `BTC: bc1qsshn75ase5c66sjlfmefymw5dx8w384jvp4v0j` 
 ###### Made with ♥ for the community

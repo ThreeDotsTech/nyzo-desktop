@@ -1,5 +1,4 @@
 const { app, BrowserWindow, ipcMain, Tray } = require('electron')
-if (require('electron-squirrel-startup')) return app.quit();
 const path = require('path');
 const url = require('url');
 const log = require('electron-log');
@@ -27,7 +26,7 @@ function createWindow() {
         }
     })
     unlockWindow.loadFile('unlock.html');
-    unlockWindow.webContents.openDevTools()
+    //unlockWindow.webContents.openDevTools()
 }
 
 

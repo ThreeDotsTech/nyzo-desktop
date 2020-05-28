@@ -12,7 +12,7 @@ let unlockWindow;
 let icon;
 
 function createWindow() {
-    icon = new Tray(path.join(__dirname, 'icon/AppIcon.png'));
+    icon = path.join(__dirname, 'icon/AppIcon.png');
     unlockWindow = new BrowserWindow({
         frame: false,
         width: 400,
@@ -23,7 +23,7 @@ function createWindow() {
             nodeIntegration: true
         }
     })
-    unlockWindow.loadFile('unlock.html');
+    unlockWindow.loadFile(path.join(__dirname, 'unlock.html'));
     //unlockWindow.webContents.openDevTools()
 }
 
@@ -132,7 +132,7 @@ ipcMain.on('WALLET_REMOVED', (event, args) => {
             nodeIntegration: true
         }
     });
-    unlockWindow.loadFile('unlock.html');
+    unlockWindow.loadFile(path.join(__dirname, 'unlock.html'));
 
 });
 
@@ -154,7 +154,7 @@ ipcMain.on('DISPLAY_WALLET', (event, args) => {
     mainWindow.on('close', (event) => {
         hiddenWindow.close();
     });
-    mainWindow.loadFile('index.html');
+    mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
     //mainWindow.webContents.openDevTools();
 });

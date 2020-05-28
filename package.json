@@ -42,7 +42,8 @@
           "config": {
             "icon": "icon/AppIcon.ico",
             "setupIcon": "icon/AppIcon.ico",
-            "exe": "nyzo-wallet.exe"
+            "exe": "nyzo-wallet.exe",
+            "loadingGif": "images/installing.gif"
           }
         }
       ]

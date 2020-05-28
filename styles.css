@@ -3,6 +3,9 @@
     -webkit-user-select: none;
     -webkit-app-region: drag;
 }
+.no-drag {
+  -webkit-app-region: no-drag;
+}
 .disabledBtn {
   @apply text-baseLigth;
   @apply bg-secondaryLigth;

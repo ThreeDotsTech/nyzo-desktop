@@ -424,7 +424,7 @@
     </div>
 
     <div id="hover"
-        class="absolute flex items-center justify-center w-full h-full bg-gray-500 bg-opacity-25 z-40 py-40 pl-56 pr-32 hidden">
+        class="absolute flex items-center justify-center w-full h-full bg-gray-500 bg-opacity-25 z-40 py-40 pl-48 pr-24 hidden">
         <div class="w-full h-full bg-baseLigth rounded-lg justify-between items-center flex flex-col p-5">
             <div id="animation">
 
@@ -570,6 +570,7 @@
         ipcRenderer.on('WALLET_FROM_CACHE', (event, walletFromCache) => {
             wallet = plainToClass(Wallet, walletFromCache);
             loadWallet();
+            loadTransactionsFromLocalStorage();
             updateAccounts().then(function () {
                 changeDisplayedAccount(0);
                 if (!isLoaded) {
@@ -581,6 +582,7 @@
                 splide2.refresh();
             });
         });
+
 
         splide.on('moved', (newIndex, oldIndex, destIndex) => {
             changeDisplayedAccount(destIndex, oldIndex);
@@ -681,30 +683,35 @@
         }
 
         function loadTransactionsFromLocalStorage() {
-            publicKeys = plainToClass(String, JSON.parse(localStorage.getItem('publicKeys')));
-            let accountsToSet = plainToClass(Account, JSON.parse(localStorage.getItem('accounts')));
-            if (accountsToSet !== null) {
-                accounts = accountsToSet;
-            }
-            let secondsToSet = localStorage.getItem('seconds');
-            if (secondsToSet !== null) {
-                seconds = secondsToSet;
-            }
-            secondsInput.value = seconds;
-            if (accounts !== null) {
-                for (let i = 0; i < accounts.length; i++) {
-                    const eachAccount = accounts[i];
-                    combineAccounts();
-                    displayAccountName(i + 1, eachAccount);
-                    changeDisplayedAccount(splide.index);
+            let publicKeysToCheck = plainToClass(String, JSON.parse(localStorage.getItem('publicKeys')));
+            if (publicKeysToCheck == publicKeys) {
+                publicKeys = publicKeysToCheck;
+                let accountsToSet = plainToClass(Account, JSON.parse(localStorage.getItem('accounts')));
+                if (accountsToSet !== null) {
+                    accounts = accountsToSet;
                 }
-                if (!isLoaded) {
-                    document.getElementById('loading').classList.add('hidden');
-                    document.getElementById('innerMainWindow').classList.remove('hidden');
-                    isLoaded = true;
+                let secondsToSet = localStorage.getItem('seconds');
+                if (secondsToSet !== null) {
+                    seconds = secondsToSet;
                 }
-                splide.refresh();
-                splide2.refresh();
+                secondsInput.value = seconds;
+                if (accounts !== null) {
+                    for (let i = 0; i < accounts.length; i++) {
+                        const eachAccount = accounts[i];
+                        combineAccounts();
+                        displayAccountName(i + 1, eachAccount);
+                        changeDisplayedAccount(splide.index);
+                    }
+                    if (!isLoaded) {
+                        document.getElementById('loading').classList.add('hidden');
+                        document.getElementById('innerMainWindow').classList.remove('hidden');
+                        isLoaded = true;
+                    }
+                    splide.refresh();
+                    splide2.refresh();
+                }
+            } else {
+                localStorage.clear();
             }
         }
 
@@ -723,7 +730,7 @@
                 if (newPublicKey != false) {
                     publicKeys.push(newPublicKey);
                     saveWallet();
-                    updateAccount(publicKeys[publicKeys.length - 1], true).then(() => {
+                    updateAccount(publicKeys[publicKeys.length - 1]).then(() => {
                         changeWindow(0);
                         splide.go(`${publicKeys.length}`);
                     });
@@ -757,9 +764,9 @@
             createNewAccount();
         })
 
-        async function updateAccount(publicKey, isExternal = false) {
+        async function updateAccount(publicKey) {
             try {
-                let account = await getAccountOf(publicKey);
+                let account = await getAccountOf(publicKey); //Fetch the transactions from the account
                 function checkAccount(eachAccount) {
                     return eachAccount.publicIdentifier == account.publicIdentifier;
                 }
@@ -767,15 +774,15 @@
                     return eachID == account.publicIdentifier;
                 }
                 let accountIndex = accounts.findIndex(checkAccount);
-                let publicIdentifierIndex = publicKeys.findIndex(checkPublicID)
-                if (accountIndex == -1) {
-                    if (isExternal) {
+                let publicIdentifierIndex = publicKeys.findIndex(checkPublicID);
+                if (accountIndex == -1) { //If the account doesn't exist.
+                    if (publicIdentifierIndex > wallet.publicKeyCount - 1) {
                         account.setName(`Imported Account ${publicIdentifierIndex - wallet.publicKeyCount + 1}`);
-                        accounts.push(account);
+                        accounts.push(account);//Place the account at the end of the array
                         accountIndex = accounts.length - 1;
                     } else {
                         account.setName(`Account ${publicIdentifierIndex + 1}`);
-                        accounts.splice(wallet.publicKeyCount - 1, 0, account);
+                        accounts.splice(wallet.publicKeyCount - 1, 0, account);//Place the account before the imported accounts
                         accountIndex = publicIdentifierIndex;
                     }
 
@@ -871,7 +878,7 @@
                     return;
                 }
                 splide.add(`<div class="splide__slide" > <div id = "name-${accounts[index - 1].name}" class="flex justify-center font-semibold text-black">` + (accounts[index - 1].name) + '</div> </div>', index);
-                splide2.add(`<div class="splide__slide" > <div id = "name-${accounts[index - 1].name}" class="flex justify-center font-semibold text-black">` + (accounts[index - 1].name) + '</div> </div>', index);
+                splide2.add(`<div class="splide__slide" > <div id = "name-${accounts[index - 1].name}-2" class="flex justify-center font-semibold text-black">` + (accounts[index - 1].name) + '</div> </div>', index - 1);
             }
         }
 
@@ -1010,7 +1017,6 @@
         }
 
         function InitializeWallet() {
-            loadTransactionsFromLocalStorage();
             ipcRenderer.send('GET_WALLET_FROM_CACHE');
             intervalID = setInterval(function () { updateAccounts(); }, seconds * 1000);
         }

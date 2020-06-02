@@ -414,7 +414,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <div class="font-thin">Beta v0.1</div>
+                        <div class="font-thin">Beta v0.2</div>
                     </div>
                 </div>
 
@@ -541,6 +541,7 @@
         var balance = 0;
         var activeKeypair;
         var isLoaded = false;
+        var isAdding = false;
         var seconds = 7;
         var intervalID;
         const { ipcRenderer } = require('electron');
@@ -572,8 +573,8 @@
             loadWallet();
             loadTransactionsFromLocalStorage();
             updateAccounts().then(function () {
-                changeDisplayedAccount(0);
                 if (!isLoaded) {
+                    changeDisplayedAccount(0);
                     document.getElementById('loading').classList.add('hidden');
                     document.getElementById('innerMainWindow').classList.remove('hidden');
                     isLoaded = true;
@@ -682,9 +683,20 @@
             return generate_mnemonic(256)
         }
 
+        function arraysEqual(a, b) {
+            if (a === b) return true;
+            if (a == null || b == null) return false;
+            if (a.length != b.length) return false;
+
+            for (var i = 0; i < a.length; ++i) {
+                if (a[i] !== b[i]) return false;
+            }
+            return true;
+        }
+
         function loadTransactionsFromLocalStorage() {
             let publicKeysToCheck = plainToClass(String, JSON.parse(localStorage.getItem('publicKeys')));
-            if (publicKeysToCheck == publicKeys) {
+            if (arraysEqual(publicKeysToCheck, publicKeys)) {
                 publicKeys = publicKeysToCheck;
                 let accountsToSet = plainToClass(Account, JSON.parse(localStorage.getItem('accounts')));
                 if (accountsToSet !== null) {
@@ -716,12 +728,17 @@
         }
 
         function createNewAccount() {
-            publicKeys.splice(wallet.publicKeyCount, 0, wallet.increasePublicKeyCount());
-            saveWallet();
-            updateAccount(publicKeys[wallet.publicKeyCount - 1]).then(() => {
-                splide.go(`${wallet.publicKeyCount}`);
-            });
-
+            if (isAdding == false) {
+                isAdding = true;
+                document.getElementById("addAccountButton").classList.add('disabledBtn');
+                publicKeys.splice(wallet.publicKeyCount, 0, wallet.increasePublicKeyCount());
+                saveWallet();
+                updateAccount(publicKeys[wallet.publicKeyCount - 1]).then(() => {
+                    splide.go(`${wallet.publicKeyCount}`);
+                    document.getElementById("addAccountButton").classList.remove('disabledBtn');
+                    isAdding = false;
+                });
+            }
         }
 
         function importExternalPrivateKet() {
@@ -773,62 +790,64 @@
                 function checkPublicID(eachID) {
                     return eachID == account.publicIdentifier;
                 }
-                let accountIndex = accounts.findIndex(checkAccount);
-                let publicIdentifierIndex = publicKeys.findIndex(checkPublicID);
-                if (accountIndex == -1) { //If the account doesn't exist.
-                    if (publicIdentifierIndex > wallet.publicKeyCount - 1) {
-                        account.setName(`Imported Account ${publicIdentifierIndex - wallet.publicKeyCount + 1}`);
-                        accounts.push(account);//Place the account at the end of the array
-                        accountIndex = accounts.length - 1;
-                    } else {
-                        account.setName(`Account ${publicIdentifierIndex + 1}`);
-                        accounts.splice(wallet.publicKeyCount - 1, 0, account);//Place the account before the imported accounts
-                        accountIndex = publicIdentifierIndex;
-                    }
-
-                } else {
-                    account.setName(accounts[accountIndex].name);
-                    if (accounts[accountIndex].transactions.length != account.transactions.length) {
-                        let newTransactions = [];
-                        newTransactions = account.transactions.slice(0, account.transactions.length - accounts[accountIndex].transactions.length);
-                        if (newTransactions.length == 1) {
-                            if (newTransactions[0].isSend == false) {
-                                notificationText = `You recived ${newTransactions[0].amount}.`;
-                                let notification = new Notification('New transaction', {
-                                    body: notificationText
-                                });
-                                notification.onclick = () => {
-                                    splide.go(`${accountIndex + 1}`);
-                                }
-                            }
+                if (account !== null) {
+                    let accountIndex = accounts.findIndex(checkAccount);
+                    let publicIdentifierIndex = publicKeys.findIndex(checkPublicID);
+                    if (accountIndex == -1) { //If the account doesn't exist.
+                        if (publicIdentifierIndex > wallet.publicKeyCount - 1) {
+                            account.setName(`Imported Account ${publicIdentifierIndex - wallet.publicKeyCount + 1}`);
+                            accounts.push(account);//Place the account at the end of the array
+                            accountIndex = accounts.length - 1;
                         } else {
-                            let totalReceived = 0;
-                            for (const eachTransaction of newTransactions) {
-                                if (eachTransaction.isSend) {
-                                    totalReceived -= +eachTransaction.amount.split('∩').join('');
-                                } else {
-                                    totalReceived += +eachTransaction.amount.split('∩').join('');
-                                }
-                            }
-                            if (totalReceived > 0) {
-                                totalReceived = Math.floor(totalReceived * 1000000) / 1000000
-                                notificationText = `You recived ∩${totalReceived}.`;
-                                let notification = new Notification('New transaction', {
-                                    body: notificationText
-                                });
-                                notification.onclick = () => {
-                                    splide.go(`${0}`);
-                                }
-                            }
-
+                            account.setName(`Account ${publicIdentifierIndex + 1}`);
+                            accounts.splice(wallet.publicKeyCount - 1, 0, account);//Place the account before the imported accounts
+                            accountIndex = publicIdentifierIndex;
                         }
+                        combineAccounts();
+                        displayAccountName(accountIndex + 1, account);
+                        changeDisplayedAccount(splide.index);
+                        changeActiveKeypair(splide2.index);
+
+                    } else {
+                        if (accounts[accountIndex].transactions.length != account.transactions.length) {
+                            let newTransactions = [];
+                            newTransactions = account.transactions.slice(0, account.transactions.length - accounts[accountIndex].transactions.length);
+                            if (newTransactions.length == 1) {
+                                if (newTransactions[0].isSend == false) {
+                                    notificationText = `You recived ${newTransactions[0].amount}.`;
+                                    let notification = new Notification('New transaction', {
+                                        body: notificationText
+                                    });
+                                    notification.onclick = () => {
+                                        splide.go(`${accountIndex + 1}`);
+                                    }
+                                }
+                            } else {
+                                let totalReceived = 0;
+                                for (const eachTransaction of newTransactions) {
+                                    if (eachTransaction.isSend) {
+                                        totalReceived -= +eachTransaction.amount.split('∩').join('');
+                                    } else {
+                                        totalReceived += +eachTransaction.amount.split('∩').join('');
+                                    }
+                                }
+                                if (totalReceived > 0) {
+                                    totalReceived = Math.floor(totalReceived * 1000000) / 1000000
+                                    notificationText = `You recived ∩${totalReceived}.`;
+                                    let notification = new Notification('New transaction', {
+                                        body: notificationText
+                                    });
+                                    notification.onclick = () => {
+                                        splide.go(`${0}`);
+                                    }
+                                }
+
+                            }
+                        }
+                        accounts[accountIndex].transactions = account.transactions;
+                        combineAccounts();
                     }
-                    accounts[accountIndex] = account;
                 }
-                combineAccounts();
-                displayAccountName(accountIndex + 1, account);
-                changeDisplayedAccount(splide.index);
-                changeActiveKeypair(splide2.index)
             } catch (error) {
                 return;
             }
@@ -871,7 +890,6 @@
                 if (document.getElementById(`name-${index}`) == undefined) {
                     splide.add(`<div class="splide__slide"> <div id = "name-${index}" class="flex justify-center font-semibold text-black">` + (`All my accounts`) + '</div> </div>', index);
                 }
-
             } else {
                 let oldLi = document.getElementById(`name-${accounts[index - 1].name}`);
                 if (oldLi != undefined) {
@@ -971,6 +989,7 @@
                 return account;
             } catch (error) {
                 document.getElementById("errorIcon").classList.remove('invisible');
+                return null;
             }
 
         }

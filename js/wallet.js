@@ -23,7 +23,7 @@ class Wallet {
 
     derivePublicKey(index) {
         const MasterKey = this.getMasterKey();
-        let pubkey = MasterKey.derive(index).toPubKeyHexWithDashes();
+        let pubkey = MasterKey.deriveBIP44(index).toPubKeyHexWithDashes();
         return pubkey;
     }
 
@@ -54,7 +54,7 @@ class Wallet {
 
     getPrivateKeyOfDeriveIndex(index) {
         const MasterKey = this.getMasterKey();
-        let privateKey = MasterKey.derive(index).toSeedHexWithDashes();
+        let privateKey = MasterKey.deriveBIP44(index).toSeedHexWithDashes();
         return privateKey;
     }
 

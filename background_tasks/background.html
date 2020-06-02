@@ -10,7 +10,7 @@
     var walletPath;
 
     ipcRenderer.on('CHECK_WALLET', (event, args) => {
-        walletPath = path.join(args['path'], 'nyzo-desktop', 'wallet.nyzowallet');
+        walletPath = path.join(args['path'], 'Nyzo', 'wallet.nyzowallet');
         ipcRenderer.send('MESSAGE_FROM_RENDERER', { message: `Checking if wallet exists at "${walletPath}"...` });
         const response = jetpack.exists(walletPath);
         ipcRenderer.send('WALLET_STATUS', { status: response });

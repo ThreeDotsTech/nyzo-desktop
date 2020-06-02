@@ -18,9 +18,9 @@ Multiple accounts? We got you covered. You can import keypairs which were not de
 ### Wallet Encryption
 Your Mnemonic Seed and Imported Keys are stored and encrypted in a single file. The location of this file depends on the host system:
 
--   `%APPDATA%/nyzo-desktop/wallet.nyzowallet`  on Windows
--   `$XDG_CONFIG_HOME/nyzo-desktop/wallet.nyzowallet`  or  `~/.config/nyzo-desktop/wallet.nyzowallet`  on Linux
--   `~/Library/Application Support/nyzo-desktop/wallet.nyzowallet`  on macOS
+-   `%APPDATA%/Nyzo/wallet.nyzowallet`  on Windows
+-   `$XDG_CONFIG_HOME/Nyzo/wallet.nyzowallet`  or  `~/.config/Nyzo/wallet.nyzowallet`  on Linux
+-   `~/Library/Application Support/Nyzo/wallet.nyzowallet`  on macOS
 
 ### Your keys never leave your computer
 

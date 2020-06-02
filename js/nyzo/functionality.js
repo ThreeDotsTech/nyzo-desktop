@@ -1,6 +1,5 @@
 var recipientIdentifier = '';
 var balanceMicronyzos = 0;
-var sendCoinsPage = 0;
 var micronyzosToSend = 0;
 var senderData = '';
 
@@ -118,8 +117,15 @@ function submitTransactionClick() {
                                     showHoverInfo(result.content.message, false);
                                 } else {
                                     showHoverInfo(result.content.message, true);
-                                }
+                                    document.getElementById('recipientIdentifierInput').value = '';
+                                    recipientIdentifier = '';
+                                    document.getElementById('amountToSendInput').value = '';
+                                    micronyzosToSend = 0;
+                                    document.getElementById('senderDataInput').value = '';
+                                    senderData = '';
+                                    document.getElementById('recipientWillReceiveInput').value = '';
 
+                                }
                             }
                         }
                     );

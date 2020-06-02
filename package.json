@@ -34,7 +34,8 @@
           "name": "@electron-forge/maker-dmg",
           "config": {
             "icon": "icon/AppIcon.icns",
-            "background": "images/dmgBackground.png"
+            "background": "images/dmgBackground.png",
+            "format": "ULFO"
           }
         },
         {

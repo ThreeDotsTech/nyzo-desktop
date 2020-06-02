@@ -414,7 +414,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <div class="font-thin">Beta v0.1</div>
+                        <div class="font-thin">Beta v0.2</div>
                     </div>
                 </div>
 
@@ -424,7 +424,7 @@
     </div>
 
     <div id="hover"
-        class="absolute flex items-center justify-center w-full h-full bg-gray-500 bg-opacity-25 z-40 py-40 pl-56 pr-32 hidden">
+        class="absolute flex items-center justify-center w-full h-full bg-gray-500 bg-opacity-25 z-40 py-40 pl-48 pr-24 hidden">
         <div class="w-full h-full bg-baseLigth rounded-lg justify-between items-center flex flex-col p-5">
             <div id="animation">
 
@@ -541,6 +541,7 @@
         var balance = 0;
         var activeKeypair;
         var isLoaded = false;
+        var isAdding = false;
         var seconds = 7;
         var intervalID;
         const { ipcRenderer } = require('electron');
@@ -570,9 +571,10 @@
         ipcRenderer.on('WALLET_FROM_CACHE', (event, walletFromCache) => {
             wallet = plainToClass(Wallet, walletFromCache);
             loadWallet();
+            loadTransactionsFromLocalStorage();
             updateAccounts().then(function () {
-                changeDisplayedAccount(0);
                 if (!isLoaded) {
+                    changeDisplayedAccount(0);
                     document.getElementById('loading').classList.add('hidden');
                     document.getElementById('innerMainWindow').classList.remove('hidden');
                     isLoaded = true;
@@ -581,6 +583,7 @@
                 splide2.refresh();
             });
         });
+
 
         splide.on('moved', (newIndex, oldIndex, destIndex) => {
             changeDisplayedAccount(destIndex, oldIndex);
@@ -680,41 +683,62 @@
             return generate_mnemonic(256)
         }
 
+        function arraysEqual(a, b) {
+            if (a === b) return true;
+            if (a == null || b == null) return false;
+            if (a.length != b.length) return false;
+
+            for (var i = 0; i < a.length; ++i) {
+                if (a[i] !== b[i]) return false;
+            }
+            return true;
+        }
+
         function loadTransactionsFromLocalStorage() {
-            publicKeys = plainToClass(String, JSON.parse(localStorage.getItem('publicKeys')));
-            let accountsToSet = plainToClass(Account, JSON.parse(localStorage.getItem('accounts')));
-            if (accountsToSet !== null) {
-                accounts = accountsToSet;
-            }
-            let secondsToSet = localStorage.getItem('seconds');
-            if (secondsToSet !== null) {
-                seconds = secondsToSet;
-            }
-            secondsInput.value = seconds;
-            if (accounts !== null) {
-                for (let i = 0; i < accounts.length; i++) {
-                    const eachAccount = accounts[i];
-                    combineAccounts();
-                    displayAccountName(i + 1, eachAccount);
-                    changeDisplayedAccount(splide.index);
+            let publicKeysToCheck = plainToClass(String, JSON.parse(localStorage.getItem('publicKeys')));
+            if (arraysEqual(publicKeysToCheck, publicKeys)) {
+                publicKeys = publicKeysToCheck;
+                let accountsToSet = plainToClass(Account, JSON.parse(localStorage.getItem('accounts')));
+                if (accountsToSet !== null) {
+                    accounts = accountsToSet;
                 }
-                if (!isLoaded) {
-                    document.getElementById('loading').classList.add('hidden');
-                    document.getElementById('innerMainWindow').classList.remove('hidden');
-                    isLoaded = true;
+                let secondsToSet = localStorage.getItem('seconds');
+                if (secondsToSet !== null) {
+                    seconds = secondsToSet;
                 }
-                splide.refresh();
-                splide2.refresh();
+                secondsInput.value = seconds;
+                if (accounts !== null) {
+                    for (let i = 0; i < accounts.length; i++) {
+                        const eachAccount = accounts[i];
+                        combineAccounts();
+                        displayAccountName(i + 1, eachAccount);
+                        changeDisplayedAccount(splide.index);
+                    }
+                    if (!isLoaded) {
+                        document.getElementById('loading').classList.add('hidden');
+                        document.getElementById('innerMainWindow').classList.remove('hidden');
+                        isLoaded = true;
+                    }
+                    splide.refresh();
+                    splide2.refresh();
+                }
+            } else {
+                localStorage.clear();
             }
         }
 
         function createNewAccount() {
-            publicKeys.splice(wallet.publicKeyCount, 0, wallet.increasePublicKeyCount());
-            saveWallet();
-            updateAccount(publicKeys[wallet.publicKeyCount - 1]).then(() => {
-                splide.go(`${wallet.publicKeyCount}`);
-            });
-
+            if (isAdding == false) {
+                isAdding = true;
+                document.getElementById("addAccountButton").classList.add('disabledBtn');
+                publicKeys.splice(wallet.publicKeyCount, 0, wallet.increasePublicKeyCount());
+                saveWallet();
+                updateAccount(publicKeys[wallet.publicKeyCount - 1]).then(() => {
+                    splide.go(`${wallet.publicKeyCount}`);
+                    document.getElementById("addAccountButton").classList.remove('disabledBtn');
+                    isAdding = false;
+                });
+            }
         }
 
         function importExternalPrivateKet() {
@@ -723,7 +747,7 @@
                 if (newPublicKey != false) {
                     publicKeys.push(newPublicKey);
                     saveWallet();
-                    updateAccount(publicKeys[publicKeys.length - 1], true).then(() => {
+                    updateAccount(publicKeys[publicKeys.length - 1]).then(() => {
                         changeWindow(0);
                         splide.go(`${publicKeys.length}`);
                     });
@@ -757,71 +781,73 @@
             createNewAccount();
         })
 
-        async function updateAccount(publicKey, isExternal = false) {
+        async function updateAccount(publicKey) {
             try {
-                let account = await getAccountOf(publicKey);
+                let account = await getAccountOf(publicKey); //Fetch the transactions from the account
                 function checkAccount(eachAccount) {
                     return eachAccount.publicIdentifier == account.publicIdentifier;
                 }
                 function checkPublicID(eachID) {
                     return eachID == account.publicIdentifier;
                 }
-                let accountIndex = accounts.findIndex(checkAccount);
-                let publicIdentifierIndex = publicKeys.findIndex(checkPublicID)
-                if (accountIndex == -1) {
-                    if (isExternal) {
-                        account.setName(`Imported Account ${publicIdentifierIndex - wallet.publicKeyCount + 1}`);
-                        accounts.push(account);
-                        accountIndex = accounts.length - 1;
-                    } else {
-                        account.setName(`Account ${publicIdentifierIndex + 1}`);
-                        accounts.splice(wallet.publicKeyCount - 1, 0, account);
-                        accountIndex = publicIdentifierIndex;
-                    }
-
-                } else {
-                    account.setName(accounts[accountIndex].name);
-                    if (accounts[accountIndex].transactions.length != account.transactions.length) {
-                        let newTransactions = [];
-                        newTransactions = account.transactions.slice(0, account.transactions.length - accounts[accountIndex].transactions.length);
-                        if (newTransactions.length == 1) {
-                            if (newTransactions[0].isSend == false) {
-                                notificationText = `You recived ${newTransactions[0].amount}.`;
-                                let notification = new Notification('New transaction', {
-                                    body: notificationText
-                                });
-                                notification.onclick = () => {
-                                    splide.go(`${accountIndex + 1}`);
-                                }
-                            }
+                if (account !== null) {
+                    let accountIndex = accounts.findIndex(checkAccount);
+                    let publicIdentifierIndex = publicKeys.findIndex(checkPublicID);
+                    if (accountIndex == -1) { //If the account doesn't exist.
+                        if (publicIdentifierIndex > wallet.publicKeyCount - 1) {
+                            account.setName(`Imported Account ${publicIdentifierIndex - wallet.publicKeyCount + 1}`);
+                            accounts.push(account);//Place the account at the end of the array
+                            accountIndex = accounts.length - 1;
                         } else {
-                            let totalReceived = 0;
-                            for (const eachTransaction of newTransactions) {
-                                if (eachTransaction.isSend) {
-                                    totalReceived -= +eachTransaction.amount.split('∩').join('');
-                                } else {
-                                    totalReceived += +eachTransaction.amount.split('∩').join('');
-                                }
-                            }
-                            if (totalReceived > 0) {
-                                totalReceived = Math.floor(totalReceived * 1000000) / 1000000
-                                notificationText = `You recived ∩${totalReceived}.`;
-                                let notification = new Notification('New transaction', {
-                                    body: notificationText
-                                });
-                                notification.onclick = () => {
-                                    splide.go(`${0}`);
-                                }
-                            }
-
+                            account.setName(`Account ${publicIdentifierIndex + 1}`);
+                            accounts.splice(wallet.publicKeyCount - 1, 0, account);//Place the account before the imported accounts
+                            accountIndex = publicIdentifierIndex;
                         }
+                        combineAccounts();
+                        displayAccountName(accountIndex + 1, account);
+                        changeDisplayedAccount(splide.index);
+                        changeActiveKeypair(splide2.index);
+
+                    } else {
+                        if (accounts[accountIndex].transactions.length != account.transactions.length) {
+                            let newTransactions = [];
+                            newTransactions = account.transactions.slice(0, account.transactions.length - accounts[accountIndex].transactions.length);
+                            if (newTransactions.length == 1) {
+                                if (newTransactions[0].isSend == false) {
+                                    notificationText = `You recived ${newTransactions[0].amount}.`;
+                                    let notification = new Notification('New transaction', {
+                                        body: notificationText
+                                    });
+                                    notification.onclick = () => {
+                                        splide.go(`${accountIndex + 1}`);
+                                    }
+                                }
+                            } else {
+                                let totalReceived = 0;
+                                for (const eachTransaction of newTransactions) {
+                                    if (eachTransaction.isSend) {
+                                        totalReceived -= +eachTransaction.amount.split('∩').join('');
+                                    } else {
+                                        totalReceived += +eachTransaction.amount.split('∩').join('');
+                                    }
+                                }
+                                if (totalReceived > 0) {
+                                    totalReceived = Math.floor(totalReceived * 1000000) / 1000000
+                                    notificationText = `You recived ∩${totalReceived}.`;
+                                    let notification = new Notification('New transaction', {
+                                        body: notificationText
+                                    });
+                                    notification.onclick = () => {
+                                        splide.go(`${0}`);
+                                    }
+                                }
+
+                            }
+                        }
+                        accounts[accountIndex].transactions = account.transactions;
+                        combineAccounts();
                     }
-                    accounts[accountIndex] = account;
                 }
-                combineAccounts();
-                displayAccountName(accountIndex + 1, account);
-                changeDisplayedAccount(splide.index);
-                changeActiveKeypair(splide2.index)
             } catch (error) {
                 return;
             }
@@ -864,14 +890,13 @@
                 if (document.getElementById(`name-${index}`) == undefined) {
                     splide.add(`<div class="splide__slide"> <div id = "name-${index}" class="flex justify-center font-semibold text-black">` + (`All my accounts`) + '</div> </div>', index);
                 }
-
             } else {
                 let oldLi = document.getElementById(`name-${accounts[index - 1].name}`);
                 if (oldLi != undefined) {
                     return;
                 }
                 splide.add(`<div class="splide__slide" > <div id = "name-${accounts[index - 1].name}" class="flex justify-center font-semibold text-black">` + (accounts[index - 1].name) + '</div> </div>', index);
-                splide2.add(`<div class="splide__slide" > <div id = "name-${accounts[index - 1].name}" class="flex justify-center font-semibold text-black">` + (accounts[index - 1].name) + '</div> </div>', index);
+                splide2.add(`<div class="splide__slide" > <div id = "name-${accounts[index - 1].name}-2" class="flex justify-center font-semibold text-black">` + (accounts[index - 1].name) + '</div> </div>', index - 1);
             }
         }
 
@@ -964,6 +989,7 @@
                 return account;
             } catch (error) {
                 document.getElementById("errorIcon").classList.remove('invisible');
+                return null;
             }
 
         }
@@ -1010,7 +1036,6 @@
         }
 
         function InitializeWallet() {
-            loadTransactionsFromLocalStorage();
             ipcRenderer.send('GET_WALLET_FROM_CACHE');
             intervalID = setInterval(function () { updateAccounts(); }, seconds * 1000);
         }

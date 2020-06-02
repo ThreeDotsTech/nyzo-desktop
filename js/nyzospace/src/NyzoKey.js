@@ -1,12 +1,11 @@
 
-//const { sign, box, secretbox, randomBytes } = require('tweetnacl')
+// The following code is modifies from https://github.com/AngainorDev/NyzoSpace/blob/master/js/src/NyzoKey.js
+// released under the MIT License.
 const { sign } = require('tweetnacl')
 const createHash = require('create-hash')
 const createHmac = require('create-hmac')
-// const { decodeUTF8, encodeUTF8, encodeBase64, decodeBase64 } = require("tweetnacl-util")
 
 const bip39 = require('bip39');
-// const crypto = require("crypto");
 
 const { NyzoFormat } = require('./NyzoFormat')
 nyzoFormat = new NyzoFormat()
@@ -24,6 +23,9 @@ const CURVE_KEY = 'ed25519 seed'
 
 // ed25519 only uses hardened childs
 const HARDENED_OFFSET = 0x80000000;
+
+// Nyzo SLIP-044 Coin number
+const COIN_NUMBER = 380;
 
 function nyzoSeedToHexString(nyzoSeed) {
     return nyzoSeed.split('-').join('').slice(0, 64)
@@ -103,6 +105,12 @@ NyzoKey.prototype.derive = function (index, hardened = true) {
     derived.keyPair = sign.keyPair.fromSeed(derived.seed)
     derived.chainCode = IR
     return derived
+}
+
+
+NyzoKey.prototype.deriveBIP44 = function (index) {
+    // Returns derived key m/44'/380'/index'
+    return this.derive(44).derive(COIN_NUMBER).derive(index)
 }
 
 
@@ -224,6 +232,6 @@ NyzoKey.prototype.SignCycleTx = function (sig_, vote, delay) {
 }
 
 module.exports = {
-    version: "0.0.8",
+    version: "0.0.9",
     NyzoKey
 }

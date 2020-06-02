@@ -1830,6 +1830,9 @@ tbody tr td:last-child { border-top-right-radius: 10px; border-bottom-right-radi
 .pr-32 {
   padding-right: 8rem;
 }
+.pr-24 {
+  padding-right: 6rem;
+}
 
 .pl-48 {
   padding-left: 12rem;

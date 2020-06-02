@@ -1,7 +1,7 @@
 
 #  Nyzo Desktop Wallet
 
-Nyzo Desktop Wallet is a  **cross platform** light wallet for the **Nyzo** Cryptocurrency. It works on **Windows**, **MacOS** and **Linux**.
+Nyzo Desktop Wallet is a  **cross platform** light wallet for **Nyzo** Cryptocurrency. It works on **Windows**, **MacOS** and **Linux**.
 
 
 ![Nyzo Wallet](https://i.ibb.co/4JKQPJ9/Screen-Shot-2020-05-27-at-21-33-43.png)

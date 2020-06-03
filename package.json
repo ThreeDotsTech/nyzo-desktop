@@ -1,7 +1,7 @@
 {
   "name": "nyzo-wallet",
   "productName": "Nyzo Wallet",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The desktop wallet for the Nyzo cryptocurrency",
   "main": "main.js",
   "scripts": {
@@ -44,6 +44,7 @@
             "icon": "icon/AppIcon.ico",
             "setupIcon": "icon/AppIcon.ico",
             "exe": "nyzo-wallet.exe",
+            "setupExe": "nyzo-wallet-1.0.1-setup.exe",
             "loadingGif": "images/installing.gif"
           }
         }

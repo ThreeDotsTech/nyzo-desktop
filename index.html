@@ -710,10 +710,9 @@
                 if (accounts !== null) {
                     for (let i = 0; i < accounts.length; i++) {
                         const eachAccount = accounts[i];
-                        combineAccounts();
                         displayAccountName(i + 1, eachAccount);
-                        changeDisplayedAccount(splide.index);
                     }
+                    combineAccounts();
                     if (!isLoaded) {
                         document.getElementById('loading').classList.add('hidden');
                         document.getElementById('innerMainWindow').classList.remove('hidden');
@@ -843,9 +842,10 @@
                                 }
 
                             }
+                            accounts[accountIndex].transactions = account.transactions;
+                            accounts[accountIndex].balance = account.balance;
+                            combineAccounts();
                         }
-                        accounts[accountIndex].transactions = account.transactions;
-                        combineAccounts();
                     }
                 }
             } catch (error) {
@@ -875,6 +875,8 @@
                 return 0;
             });
             displayAccountName(0);
+            changeDisplayedAccount(splide.index);
+            changeActiveKeypair(splide2.index);
         }
 
         function displayAccountName(accountIndex, account = null) {

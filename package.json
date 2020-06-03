@@ -7,7 +7,9 @@
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make",
+    "make-mac": "electron-forge make --platform=darwin",
+    "make-windows": "electron-forge make --platform=win32",
+    "make-linux": "electron-forge make --platform=linux",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\""
   },

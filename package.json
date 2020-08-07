@@ -55,7 +55,7 @@
   },
   "dependencies": {
     "bip39": "^3.0.2",
-    "class-transformer": "^0.2.3",
+    "class-transformer": "^0.3.1",
     "concurrently": "^5.2.0",
     "create-hash": "^1.2.0",
     "create-hmac": "^1.1.7",
